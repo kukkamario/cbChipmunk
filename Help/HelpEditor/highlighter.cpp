@@ -16,17 +16,22 @@ Highlighter::Highlighter(QTextDocument *parent)
         highlightingRules.append(rule);
     }
 
-
-    singleLineCommentFormat.setForeground(Qt::gray);
-    rule.pattern = QRegExp("(//|')[^\n]*");
-    rule.format = singleLineCommentFormat;
+    numberFormat.setForeground(Qt::red);
+    rule.pattern = QRegExp("\\b[0-9.]+\\b");
+    rule.format = numberFormat;
     highlightingRules.append(rule);
+
 
     //multiLineCommentFormat.setForeground(Qt::gray);
 
     quotationFormat.setForeground(Qt::darkGreen);
     rule.pattern = QRegExp("\".*\"");
     rule.format = quotationFormat;
+    highlightingRules.append(rule);
+
+    singleLineCommentFormat.setForeground(Qt::gray);
+    rule.pattern = QRegExp("(//|')[^\n]*");
+    rule.format = singleLineCommentFormat;
     highlightingRules.append(rule);
 
     /*functionFormat.setFontItalic(true);

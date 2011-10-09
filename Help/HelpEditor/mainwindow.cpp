@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     mModified = false;
+    mIgnoreSignals = false;
     mCurrentHelp = 0;
     mHighlighter = new Highlighter(ui->exampleTextEdit->document());
 
@@ -60,8 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mItalicButton->setChecked(false);
     mItalicButton->setToolTip(tr("Kursivointi"));
     mItalicButton->setShortcut(QKeySequence(QKeySequence::Italic));
-    connect(mItalicButton,SIGNAL(toggled(bool)),ui->descTextEdit,SLOT(setFontItalic(bool)));
-    connect(mItalicButton,SIGNAL(toggled(bool)),ui->parametreTextEdit,SLOT(setFontItalic(bool)));
+    connect(mItalicButton,SIGNAL(toggled(bool)),this,SLOT(setFontItalic(bool)));
 
     ui->mainToolBar->addSeparator();
 
@@ -70,15 +70,13 @@ MainWindow::MainWindow(QWidget *parent) :
     mUnderlineButton->setChecked(false);
     mUnderlineButton->setToolTip(tr("Alleviivaus"));
     mUnderlineButton->setShortcut(QKeySequence(QKeySequence::Underline));
-    connect(mUnderlineButton,SIGNAL(toggled(bool)),ui->descTextEdit,SLOT(setFontUnderline(bool)));
-    connect(mUnderlineButton,SIGNAL(toggled(bool)),ui->parametreTextEdit,SLOT(setFontUnderline(bool)));
+    connect(mUnderlineButton,SIGNAL(toggled(bool)),this,SLOT(setFontUnderline(bool)));
 
     ui->mainToolBar->addSeparator();
 
     mFontCombo = new QFontComboBox(this);
     mFontCombo->setCurrentFont(ui->parametreTextEdit->currentFont());
-    connect(mFontCombo,SIGNAL(currentFontChanged(QFont)),ui->descTextEdit,SLOT(setCurrentFont(QFont)));
-    connect(mFontCombo,SIGNAL(currentFontChanged(QFont)),ui->parametreTextEdit,SLOT(setCurrentFont(QFont)));
+    connect(mFontCombo,SIGNAL(currentFontChanged(QFont)),this,SLOT(setTextEditFont(QFont)));
     ui->mainToolBar->addWidget(mFontCombo);
 
     ui->mainToolBar->addSeparator();
@@ -534,6 +532,7 @@ void MainWindow::generate()
 
 void MainWindow::setFontBold(bool t)
 {
+    if (mIgnoreSignals) return;
     if (t)
     {
         ui->descTextEdit->setFontWeight(QFont::Bold);
@@ -546,6 +545,27 @@ void MainWindow::setFontBold(bool t)
     }
 }
 
+void MainWindow::setFontItalic(bool t)
+{
+    if (mIgnoreSignals) return;
+    ui->descTextEdit->setFontItalic(t);
+    ui->parametreTextEdit->setFontItalic(t);
+}
+
+void MainWindow::setFontUnderline(bool t)
+{
+    if (mIgnoreSignals) return;
+    ui->descTextEdit->setFontUnderline(t);
+    ui->parametreTextEdit->setFontUnderline(t);
+}
+
+void MainWindow::setTextEditFont(QFont font)
+{
+    if (mIgnoreSignals) return;
+    ui->descTextEdit->setCurrentFont(font);
+    ui->parametreTextEdit->setCurrentFont(font);
+}
+
 
 void MainWindow::currentCharFormatChanged(QTextCharFormat format)
 {
@@ -554,11 +574,13 @@ void MainWindow::currentCharFormatChanged(QTextCharFormat format)
 
 void MainWindow::fontChanged(const QFont &font)
 {
+    mIgnoreSignals = true;
     mFontCombo->setCurrentIndex(mFontCombo->findText(QFontInfo(font).family()));
     mFontSize->setValue(font.pointSize());
     mBoldButton->setChecked(font.bold());
     mItalicButton->setChecked(font.italic());
     mUnderlineButton->setChecked(font.underline());
+    mIgnoreSignals = false;
 }
 
 void MainWindow::setFontPointSize(double s)

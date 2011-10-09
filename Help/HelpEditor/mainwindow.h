@@ -61,6 +61,7 @@ private:
     QDoubleSpinBox *mFontSize;
     void fontChanged(const QFont &font);
     Highlighter *mHighlighter;
+    bool mIgnoreSignals;
 private slots:
     void saveAs();
     void save();
@@ -70,6 +71,9 @@ private slots:
     void generate();
 
     void setFontBold(bool t);
+    void setFontItalic(bool t);
+    void setFontUnderline(bool t);
+    void setTextEditFont(QFont font);
 
     void itemClicked(QModelIndex index);
     void changed();
