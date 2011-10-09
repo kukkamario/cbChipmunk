@@ -13,6 +13,8 @@ GenerateDialog::GenerateDialog(QWidget *parent) :
     connect(ui->folderBaseOpen,SIGNAL(clicked()),this,SLOT(folderBasePressed()));
     connect(ui->functionBaseOpen,SIGNAL(clicked()),this,SLOT(functionBasePressed()));
     connect(ui->destinationSelect,SIGNAL(clicked()),this,SLOT(destinationFolderSelect()));
+    ui->folderBase->setText(QApplication::applicationDirPath()+"/data/folder.html");
+    ui->functionBase->setText(QApplication::applicationDirPath()+"/data/function.html");
 }
 
 GenerateDialog::~GenerateDialog()
@@ -46,13 +48,13 @@ QString GenerateDialog::destinationFolder()
 
 void GenerateDialog::folderBasePressed()
 {
-    QString file = QFileDialog::getOpenFileName(this,"",QApplication::applicationDirPath()+"/data",tr("Kaikki tiedosto (*.*)"));
+    QString file = QFileDialog::getOpenFileName(this,"",QFileInfo(ui->folderBase->text()).path(),tr("Kaikki tiedosto (*.*)"));
     if (!file.isEmpty()) ui->folderBase->setText(file);
 }
 
 void GenerateDialog::functionBasePressed()
 {
-    QString file = QFileDialog::getOpenFileName(this,"",QApplication::applicationDirPath()+"/data",tr("Kaikki tiedosto (*.*)"));
+    QString file = QFileDialog::getOpenFileName(this,"",QFileInfo(ui->functionBase->text()).path(),tr("Kaikki tiedosto (*.*)"));
     if (!file.isEmpty()) ui->functionBase->setText(file);
 }
 

@@ -10,10 +10,12 @@
 #include <QTextFragment>
 #include <QDebug>
 #include <QStringList>
+#include <commandfolder.h>
 
 CommandHelp::CommandHelp(QTreeWidgetItem *item)
 {
     mItem = item;
+    mParent = 0;
 }
 
 CommandHelp::CommandHelp(QDataStream &stream, QTreeWidgetItem *item)
@@ -25,6 +27,7 @@ CommandHelp::CommandHelp(QDataStream &stream, QTreeWidgetItem *item)
     stream >> mExamble;
     mItem = item;
     mItem->setText(0,mName);
+    mParent = 0;
 }
 
 bool CommandHelp::generateFile(QString destination, QString functionBase)
@@ -33,6 +36,23 @@ bool CommandHelp::generateFile(QString destination, QString functionBase)
     QString parsedParametres = parseTextEditHtml(mParametres);
     QString parsedExample = parseTextEditHtml(mExamble);
     QFile file(destination+"/"+mName+".html");
+    if (mParent)
+    {
+        functionBase = functionBase.replace("$$FOLDER$$",mParent->name());
+        if (mParent->parent())
+        {
+            functionBase = functionBase.replace("$$PARENTFOLDER$$",mParent->parent()->name());
+        }
+        else
+        {
+            functionBase = functionBase.replace("$$PARENTFOLDER$$","");
+        }
+    }
+    else
+    {
+        functionBase = functionBase.replace("$$FOLDER$$","").replace("$$PARENTFOLDER$$","");
+    }
+
     if (!file.open(QIODevice::WriteOnly))
     {
         QMessageBox::critical(0,"",QString("Ei voida avata tiedostoa %1").arg(destination+"/"+mName+".html"));

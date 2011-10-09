@@ -10,10 +10,12 @@ CommandFolder::CommandFolder(const QString &name, QTreeWidgetItem *item)
     mName = name;
     mItem = item;
     mItem->setText(0,name);
+    mParent = 0;
 }
 
 CommandFolder::CommandFolder(QDataStream &stream, QTreeWidgetItem *item)
 {
+    mParent = 0;
     mItem = item;
     stream >> mName;
     mItem->setText(0,mName);
@@ -23,6 +25,7 @@ CommandFolder::CommandFolder(QDataStream &stream, QTreeWidgetItem *item)
     {
         QTreeWidgetItem *chItem = new QTreeWidgetItem(item);
         CommandHelp *ch = new CommandHelp(stream,chItem);
+        ch->setParent(this);
         mHelps.append(ch);
     }
     int folders;
@@ -31,6 +34,7 @@ CommandFolder::CommandFolder(QDataStream &stream, QTreeWidgetItem *item)
     {
         QTreeWidgetItem *fItem = new QTreeWidgetItem(item);
         CommandFolder *f = new CommandFolder(stream,fItem);
+        f->setParent(this);
         mFolders.append(f);
     }
 }

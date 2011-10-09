@@ -3,6 +3,7 @@
 #include <QString>
 #include <QTreeWidgetItem>
 #include <QDataStream>
+class CommandFolder;
 class CommandHelp
 {
 public:
@@ -23,10 +24,13 @@ public:
     QTreeWidgetItem *item(){return mItem;}
     bool generateFile(QString destination,QString functionBase);
     void save(QDataStream &stream);
+    void setParent(CommandFolder *folder){mParent = folder;}
+    CommandFolder *parent(){return mParent;}
 private:
     QTreeWidgetItem *mItem;
     QString mName;
     QString parseTextEditHtml(const QString &html);
+    CommandFolder *mParent;
 };
 
 #endif // COMMANDHELP_H

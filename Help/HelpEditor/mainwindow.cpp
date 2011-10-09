@@ -473,6 +473,7 @@ void MainWindow::addNewHelp(QTreeWidgetItem *parent)
     mCommandHelps[item] = help;
     parent->setExpanded(true);
     mCommandFolders[parent]->mHelps.append(help);
+    help->setParent(mCommandFolders[parent]);
 }
 
 void MainWindow::addNewFolder(QTreeWidgetItem *parent)
@@ -484,6 +485,7 @@ void MainWindow::addNewFolder(QTreeWidgetItem *parent)
     mCommandFolders[item] = folder;
     parent->setExpanded(true);
     mCommandFolders[parent]->mFolders.append(folder);
+    folder->setParent(mCommandFolders[parent]);
 }
 
 void MainWindow::generate()
@@ -522,7 +524,7 @@ void MainWindow::generate()
         }
         folderBaseFile.close();
 
-        folderBase = folderBase.replace("$$MANUALNAME$$",mBaseFolder->name());
+        folderBase = folderBase.replace("$$MANUALNAME$$",mBaseFolder->name()).replace("$$FUNCSMALLDESC$$","");
         functionBase = functionBase.replace("$$MANUALNAME$$",mBaseFolder->name());
 
         mBaseFolder->generateFiles(dialog.destinationFolder(),folderBase,functionBase);

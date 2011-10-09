@@ -19,8 +19,11 @@ public:
     void save(QDataStream &stream);
     void removeAndDeleteAll(CommandHelpMap &mCommandHelps,CommandFolderMap &mCommandFolders);
     void addAllToMaps(CommandHelpMap &mCommandHelps,CommandFolderMap &mCommandFolders);
+    CommandFolder *parent(){return mParent;}
+    void setParent(CommandFolder *p){mParent = p;}
 private:
     QString mName;
+    CommandFolder *mParent;
     QTreeWidgetItem *mItem;
 };
 
