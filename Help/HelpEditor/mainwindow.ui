@@ -71,6 +71,9 @@
                <height>150</height>
               </size>
              </property>
+             <property name="tabStopWidth">
+              <number>20</number>
+             </property>
             </widget>
            </item>
           </layout>
@@ -81,12 +84,20 @@
           <property name="title">
            <string>Käyttö</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,2">
            <item>
-            <widget class="QPlainTextEdit" name="commandTextEdit"/>
+            <widget class="QPlainTextEdit" name="commandTextEdit">
+             <property name="tabStopWidth">
+              <number>20</number>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QTextEdit" name="parametreTextEdit"/>
+            <widget class="QTextEdit" name="parametreTextEdit">
+             <property name="tabStopWidth">
+              <number>20</number>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -104,6 +115,9 @@
                <width>0</width>
                <height>200</height>
               </size>
+             </property>
+             <property name="tabStopWidth">
+              <number>20</number>
              </property>
             </widget>
            </item>
@@ -154,7 +168,6 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionUusi">
    <property name="text">
     <string>Uusi...</string>

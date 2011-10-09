@@ -26,6 +26,7 @@ public:
 private:
     QTreeWidgetItem *mItem;
     QString mName;
+    QString parseTextEditHtml(const QString &html);
 };
 
 #endif // COMMANDHELP_H

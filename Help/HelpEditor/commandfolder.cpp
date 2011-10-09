@@ -137,7 +137,8 @@ bool CommandFolder::generateFiles(QString destination, QString folderBase, QStri
     out << parts1.first();
     for (QList<CommandFolder*>::iterator i = mFolders.begin();i != mFolders.end();i++)
     {
-        out << parts2.first().replace("$$CHILDFOLDERNAME$$",(*i)->name()).replace("$$CHILDFOLDERPATH$$",destination+"/"+mName+"/"+(*i)->name()+"/index.html");
+        QString childFolderText = parts2.first();
+        out << childFolderText.replace("$$CHILDFOLDERNAME$$",(*i)->name()).replace("$$CHILDFOLDERPATH$$",destination+"/"+mName+"/"+(*i)->name()+"/index.html");
     }
 
     QStringList parts3 = parts2.last().split("$$FUNCTIONBEGIN$$");
@@ -167,7 +168,8 @@ bool CommandFolder::generateFiles(QString destination, QString folderBase, QStri
 
     for (QList<CommandHelp*>::iterator i = mHelps.begin();i != mHelps.end();i++)
     {
-        out << parts4.first().replace("$$FUNCTIONPATH$$",destination+"/"+mName+"/"+(*i)->name()+".html").replace("$$FUNCTIONNAME$$",(*i)->name());
+        QString functionText = parts4.first();
+        out << functionText.replace("$$FUNCTIONPATH$$",destination+"/"+mName+"/"+(*i)->name()+".html").replace("$$FUNCTIONNAME$$",(*i)->name());
     }
 
     for (QList<CommandHelp*>::iterator i = mHelps.begin();i != mHelps.end();i++)

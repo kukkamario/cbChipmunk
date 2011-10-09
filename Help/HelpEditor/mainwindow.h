@@ -5,7 +5,11 @@
 #include <QTreeWidgetItem>
 #include "commandhelp.h"
 #include "commandfolder.h"
-
+#include <QTextCharFormat>
+#include "highlighter.h"
+class QFontComboBox;
+class QDoubleSpinBox;
+class QPushButton;
 typedef QMap<QTreeWidgetItem*,CommandHelp*> CommandHelpMap;
 typedef QMap<QTreeWidgetItem*,CommandFolder*> CommandFolderMap;
 
@@ -49,6 +53,14 @@ private:
     void closeEvent(QCloseEvent *e);
 
     void setTitle(const QString &fileName);
+
+    QFontComboBox *mFontCombo;
+    QAction *mBoldButton;
+    QAction *mItalicButton;
+    QAction *mUnderlineButton;
+    QDoubleSpinBox *mFontSize;
+    void fontChanged(const QFont &font);
+    Highlighter *mHighlighter;
 private slots:
     void saveAs();
     void save();
@@ -57,12 +69,17 @@ private slots:
 
     void generate();
 
+    void setFontBold(bool t);
+
     void itemClicked(QModelIndex index);
     void changed();
     void nameChanged(QString name);
 
 
     void treePopup(QPoint point);
+
+    void currentCharFormatChanged(QTextCharFormat format);
+    void setFontPointSize(double s);
 };
 
 #endif // MAINWINDOW_H

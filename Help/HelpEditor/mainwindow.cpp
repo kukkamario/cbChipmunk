@@ -9,6 +9,9 @@
 #include <QTextStream>
 #include <QStack>
 #include "textdialog.h"
+#include <QFontComboBox>
+#include <QPushButton>
+#include <QDoubleSpinBox>
 
 #define MAGIC_NUM 41221
 
@@ -19,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     mModified = false;
     mCurrentHelp = 0;
+    mHighlighter = new Highlighter(ui->exampleTextEdit->document());
+
     connect(ui->treeWidget,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(treePopup(QPoint)));
     connect(ui->treeWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(itemClicked(QModelIndex)));
     connect(ui->nameLineEdit,SIGNAL(textChanged(QString)),this,SLOT(nameChanged(QString)));
@@ -37,6 +42,60 @@ MainWindow::MainWindow(QWidget *parent) :
     setTitle("");
     mBaseFolder = 0;
     ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+
+
+
+
+    mBoldButton = ui->mainToolBar->addAction(tr("B"));
+    mBoldButton->setCheckable(true);
+    mBoldButton->setChecked(false);
+    mBoldButton->setToolTip(tr("Lihavointi"));
+    mBoldButton->setShortcut(QKeySequence(QKeySequence::Bold));
+    connect(mBoldButton,SIGNAL(toggled(bool)),this,SLOT(setFontBold(bool)));
+
+    ui->mainToolBar->addSeparator();
+
+    mItalicButton = ui->mainToolBar->addAction(tr("I"));
+    mItalicButton->setCheckable(true);
+    mItalicButton->setChecked(false);
+    mItalicButton->setToolTip(tr("Kursivointi"));
+    mItalicButton->setShortcut(QKeySequence(QKeySequence::Italic));
+    connect(mItalicButton,SIGNAL(toggled(bool)),ui->descTextEdit,SLOT(setFontItalic(bool)));
+    connect(mItalicButton,SIGNAL(toggled(bool)),ui->parametreTextEdit,SLOT(setFontItalic(bool)));
+
+    ui->mainToolBar->addSeparator();
+
+    mUnderlineButton = ui->mainToolBar->addAction(tr("U"));
+    mUnderlineButton->setCheckable(true);
+    mUnderlineButton->setChecked(false);
+    mUnderlineButton->setToolTip(tr("Alleviivaus"));
+    mUnderlineButton->setShortcut(QKeySequence(QKeySequence::Underline));
+    connect(mUnderlineButton,SIGNAL(toggled(bool)),ui->descTextEdit,SLOT(setFontUnderline(bool)));
+    connect(mUnderlineButton,SIGNAL(toggled(bool)),ui->parametreTextEdit,SLOT(setFontUnderline(bool)));
+
+    ui->mainToolBar->addSeparator();
+
+    mFontCombo = new QFontComboBox(this);
+    mFontCombo->setCurrentFont(ui->parametreTextEdit->currentFont());
+    connect(mFontCombo,SIGNAL(currentFontChanged(QFont)),ui->descTextEdit,SLOT(setCurrentFont(QFont)));
+    connect(mFontCombo,SIGNAL(currentFontChanged(QFont)),ui->parametreTextEdit,SLOT(setCurrentFont(QFont)));
+    ui->mainToolBar->addWidget(mFontCombo);
+
+    ui->mainToolBar->addSeparator();
+
+    mFontSize = new QDoubleSpinBox(this);
+    mFontSize->setSingleStep(1);
+    mFontSize->setDecimals(0);
+    mFontSize->setMinimum(6);
+    mFontSize->setMaximum(72);
+    mFontSize->setValue(ui->parametreTextEdit->fontPointSize());
+    mFontSize->setToolTip(tr("Tekstin koko"));
+    connect(mFontSize,SIGNAL(valueChanged(double)),this,SLOT(setFontPointSize(double)));
+    ui->mainToolBar->addWidget(mFontSize);
+
+    connect(ui->descTextEdit,SIGNAL(currentCharFormatChanged(QTextCharFormat)),this,SLOT(currentCharFormatChanged(QTextCharFormat)));
+    connect(ui->parametreTextEdit,SIGNAL(currentCharFormatChanged(QTextCharFormat)),this,SLOT(currentCharFormatChanged(QTextCharFormat)));
+    setModified(false);
 }
 
 MainWindow::~MainWindow()
@@ -92,7 +151,10 @@ void MainWindow::nameChanged(QString name)
 
 void MainWindow::changed()
 {
-    setModified(true);
+    if (mCurrentHelp)
+    {
+        setModified(true);
+    }
 }
 
 void MainWindow::setModified(bool t)
@@ -222,7 +284,7 @@ bool MainWindow::saveTo(const QString &path)
     {
         mCurrentHelp->mCommand = ui->commandTextEdit->toPlainText();
         mCurrentHelp->mDescription = ui->descTextEdit->toHtml();
-        mCurrentHelp->mExamble = ui->exampleTextEdit->toPlainText();
+        mCurrentHelp->mExamble = ui->exampleTextEdit->toHtml();
         mCurrentHelp->mParametres = ui->parametreTextEdit->toHtml();
         mCurrentHelp->setName(ui->nameLineEdit->text());
     }
@@ -277,7 +339,7 @@ void MainWindow::selectCommandHelp(CommandHelp *help)
         //Tallennetaan vanha
         mCurrentHelp->mCommand = ui->commandTextEdit->toPlainText();
         mCurrentHelp->mDescription = ui->descTextEdit->toHtml();
-        mCurrentHelp->mExamble = ui->exampleTextEdit->toPlainText();
+        mCurrentHelp->mExamble = ui->exampleTextEdit->toHtml();
         mCurrentHelp->mParametres = ui->parametreTextEdit->toHtml();
         mCurrentHelp->setName(ui->nameLineEdit->text());
     }
@@ -287,7 +349,7 @@ void MainWindow::selectCommandHelp(CommandHelp *help)
         enableEdit(true);
         ui->commandTextEdit->setPlainText(mCurrentHelp->mCommand);
         ui->descTextEdit->setHtml(mCurrentHelp->mDescription);
-        ui->exampleTextEdit->setPlainText(mCurrentHelp->mExamble);
+        ui->exampleTextEdit->setHtml(mCurrentHelp->mExamble);
         ui->parametreTextEdit->setHtml(mCurrentHelp->mParametres);
         ui->nameLineEdit->setText(mCurrentHelp->name());
     }
@@ -466,4 +528,39 @@ void MainWindow::generate()
         mBaseFolder->generateFiles(dialog.destinationFolder(),folderBase,functionBase);
 
     }
+}
+
+void MainWindow::setFontBold(bool t)
+{
+    if (t)
+    {
+        ui->descTextEdit->setFontWeight(QFont::Bold);
+        ui->parametreTextEdit->setFontWeight(QFont::Bold);
+    }
+    else
+    {
+        ui->descTextEdit->setFontWeight(QFont::Normal);
+        ui->parametreTextEdit->setFontWeight(QFont::Normal);
+    }
+}
+
+
+void MainWindow::currentCharFormatChanged(QTextCharFormat format)
+{
+    fontChanged(format.font());
+}
+
+void MainWindow::fontChanged(const QFont &font)
+{
+    mFontCombo->setCurrentIndex(mFontCombo->findText(QFontInfo(font).family()));
+    mFontSize->setValue(font.pointSize());
+    mBoldButton->setChecked(font.bold());
+    mItalicButton->setChecked(font.italic());
+    mUnderlineButton->setChecked(font.underline());
+}
+
+void MainWindow::setFontPointSize(double s)
+{
+    ui->descTextEdit->setFontPointSize(s);
+    ui->parametreTextEdit->setFontPointSize(s);
 }

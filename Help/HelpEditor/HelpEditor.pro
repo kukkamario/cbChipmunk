@@ -15,17 +15,21 @@ SOURCES += main.cpp\
     commandhelp.cpp \
     commandfolder.cpp \
     generatedialog.cpp \
-    textdialog.cpp
+    textdialog.cpp \
+    highlighter.cpp
 
 HEADERS  += mainwindow.h \
     commandhelp.h \
     commandfolder.h \
     generatedialog.h \
-    textdialog.h
+    textdialog.h \
+    highlighter.h
 
 FORMS    += mainwindow.ui \
     generatedialog.ui \
     textdialog.ui
+
+
 
 
 

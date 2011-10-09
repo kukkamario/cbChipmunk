@@ -46,13 +46,13 @@ QString GenerateDialog::destinationFolder()
 
 void GenerateDialog::folderBasePressed()
 {
-    QString file = QFileDialog::getOpenFileName(this,"","",tr("Kaikki tiedosto (*.*)"));
+    QString file = QFileDialog::getOpenFileName(this,"",QApplication::applicationDirPath()+"/data",tr("Kaikki tiedosto (*.*)"));
     if (!file.isEmpty()) ui->folderBase->setText(file);
 }
 
 void GenerateDialog::functionBasePressed()
 {
-    QString file = QFileDialog::getOpenFileName(this,"","",tr("Kaikki tiedosto (*.*)"));
+    QString file = QFileDialog::getOpenFileName(this,"",QApplication::applicationDirPath()+"/data",tr("Kaikki tiedosto (*.*)"));
     if (!file.isEmpty()) ui->functionBase->setText(file);
 }
 
