@@ -1,0 +1,1208 @@
+//Const CP_DLL_PATH = "cbChipmunk.dll"
+
+If Not FileExists(CP_DLL_PATH) Then MakeError "Can't find cbChimunkDll from "+CP_DLL_PATH
+
+Const CP_TYPE_IGNORE = 0
+Const CP_TYPE_BODY = 1
+Const CP_TYPE_SHAPE = 2
+Const CP_TYPE_CONSTRAINT = 3
+Const CP_GEOMETRY_BOX = 4
+Const CP_GEOMETRY_CIRCLE = 5
+Const CP_GEOMETRY_POLYGON = 6
+Const CP_GEOMETRY_SEGMENT = 7
+Const CP_TYPE_ARBITER = 8
+
+Const CP_INDEX_DLL_INDEX = 1
+
+
+Const CP_INDEX_BODY_DLL_INDEX = 1
+Const CP_INDEX_MEMBLOCK_TYPE = 0
+Const CP_INDEX_BODY_ANGLE = 5
+Const CP_INDEX_BODY_POS = 9
+Const CP_INDEX_BODY_POS_X = 9
+Const CP_INDEX_BODY_POS_Y = 13
+Const CP_INDEX_BODY_ANGULAR_VELOCITY = 17
+Const CP_INDEX_BODY_VELOCITY = 21
+Const CP_INDEX_BODY_VELOCITY_X = 21
+Const CP_INDEX_BODY_VELOCITY_Y = 25
+Const CP_INDEX_BODY_MASS = 29
+Const CP_INDEX_BODY_INERTIA = 33
+Const CP_INDEX_BODY_TYPE_PTR = 37
+Const CP_INDEX_BODY_USERDATA = 41
+
+Const CP_INDEX_SHAPE_DLL_INDEX = 1
+Const CP_INDEX_SHAPE_OWNER = 5
+Const CP_INDEX_SHAPE_OFFSET = 9
+Const CP_INDEX_SHAPE_OFFSET_X = 9
+Const CP_INDEX_SHAPE_OFFSET_Y = 13
+Const CP_INDEX_SHAPE_FRICTION = 17
+Const CP_INDEX_SHAPE_RESTITUTION = 21
+Const CP_INDEX_SHAPE_LAYER = 25
+Const CP_INDEX_SHAPE_GROUP = 29
+Const CP_INDEX_SHAPE_GEOMETRY = 33 //Memblock
+Const CP_INDEX_SHAPE_TYPE_PTR = 37
+Const CP_INDEX_SHAPE_USERDATA = 41
+
+Const CP_INDEX_ARBITER_BODY1 = 0
+Const CP_INDEX_ARBITER_BODY2 = 4
+Const CP_INDEX_ARBITER_SHAPE1 = 8
+Const CP_INDEX_ARBITER_SHAPE2 = 12
+Const CP_INDEX_ARBITER_TOTAL_IMPULSE_X = 16
+Const CP_INDEX_ARBITER_TOTAL_IMPULSE_Y = 20
+Const CP_INDEX_ARBITER_TOTAL_IMPULSE_WITH_FRICTION_X = 24
+Const CP_INDEX_ARBITER_TOTAL_IMPULSE_WITH_FRICTION_Y = 28
+Const CP_INDEX_ARBITER_FIRST_POINT = 32
+
+Const CP_INDEX_CONSTRAINT_DLL_INDEX = 1
+Const CP_INDEX_CONSTRAINT_BODY1 = 5
+Const CP_INDEX_CONSTRAINT_BODY2 = 9
+Const CP_INDEX_CONSTRAINT_TYPE = 13
+
+Const CP_INDEX_PIN_JOINT_POINT1 = 14
+Const CP_INDEX_PIN_JOINT_POINT1_X = 14
+Const CP_INDEX_PIN_JOINT_POINT1_Y = 18
+Const CP_INDEX_PIN_JOINT_POINT2 = 22
+Const CP_INDEX_PIN_JOINT_POINT2_X = 22
+Const CP_INDEX_PIN_JOINT_POINT2_Y = 26
+
+Const CP_INDEX_PIVOT_JOINT_POINT1 = 14
+Const CP_INDEX_PIVOT_JOINT_POINT1_X = 14
+Const CP_INDEX_PIVOT_JOINT_POINT1_Y = 18
+Const CP_INDEX_PIVOT_JOINT_POINT2 = 22
+Const CP_INDEX_PIVOT_JOINT_POINT2_X = 22
+Const CP_INDEX_PIVOT_JOINT_POINT2_Y = 26
+
+Const CP_INDEX_SLIDE_JOINT_POINT1 = 14
+Const CP_INDEX_SLIDE_JOINT_POINT1_X = 14
+Const CP_INDEX_SLIDE_JOINT_POINT1_Y = 18
+Const CP_INDEX_SLIDE_JOINT_POINT2 = 22
+Const CP_INDEX_SLIDE_JOINT_POINT2_X = 22
+Const CP_INDEX_SLIDE_JOINT_POINT2_Y = 26
+Const CP_INDEX_SLIDE_JOINT_MAX_DISTANCE = 34
+Const CP_INDEX_SLIDE_JOINT_MIN_DISTANCE = 30
+
+Const CP_INDEX_GROOVE_JOINT_POINT1 = 14
+Const CP_INDEX_GROOVE_JOINT_POINT1_X = 14
+Const CP_INDEX_GROOVE_JOINT_POINT1_Y = 18
+Const CP_INDEX_GROOVE_JOINT_POINT2 = 22
+Const CP_INDEX_GROOVE_JOINT_POINT2_X = 22
+Const CP_INDEX_GROOVE_JOINT_POINT2_Y = 26
+Const CP_INDEX_GROOVE_JOINT_POINT3 = 30
+Const CP_INDEX_GROOVE_JOINT_POINT3_X = 30
+Const CP_INDEX_GROOVE_JOINT_POINT3_Y = 34
+
+Const CP_INDEX_DAMPED_SPRING_POINT1 = 14
+Const CP_INDEX_DAMPED_SPRING_POINT1_X = 14
+Const CP_INDEX_DAMPED_SPRING_POINT1_Y = 18
+Const CP_INDEX_DAMPED_SPRING_POINT2 = 22
+Const CP_INDEX_DAMPED_SPRING_POINT2_X = 22
+Const CP_INDEX_DAMPED_SPRING_POINT2_Y = 26
+Const CP_INDEX_DAMPED_SPRING_REST_LEN = 30
+Const CP_INDEX_DAMPED_SPRING_STIFFNESS = 34
+Const CP_INDEX_DAMPED_SPRING_DAMPING = 38
+
+
+Const CP_INDEX_ROTARY_LIMIT_JOINT_MAX = 18
+Const CP_INDEX_ROTARY_LIMIT_JOINT_MIN = 14
+
+Const CP_LAYER_1 = 1
+Const CP_LAYER_2 = 2
+Const CP_LAYER_3 = 4
+Const CP_LAYER_4 = 8
+Const CP_LAYER_5 = 16
+Const CP_LAYER_6 = 32
+Const CP_LAYER_7 = 64
+Const CP_LAYER_8 = 128
+Const CP_LAYER_9 = 256
+Const CP_LAYER_10 = 512
+Const CP_LAYER_11 = 1024
+Const CP_LAYER_12 = 2048
+Const CP_LAYER_13 = 4096
+Const CP_LAYER_14 = 8192
+Const CP_LAYER_15 = 16384
+Const CP_LAYER_16 = 32768
+Const CP_LAYER_17 = 65536
+Const CP_LAYER_18 = 131072
+Const CP_LAYER_19 = 262144
+Const CP_LAYER_20 = 524288
+Const CP_LAYER_21 = 1048576
+Const CP_LAYER_22 = 2097152
+Const CP_LAYER_23 = 4194304
+Const CP_LAYER_24 = 8388608
+Const CP_LAYER_25 = 16777216
+Const CP_LAYER_26 = 33554432
+Const CP_LAYER_27 = 67108864
+Const CP_LAYER_28 = 134217728
+Const CP_LAYER_29 = 268435456
+Const CP_LAYER_30 = 536870912
+Const CP_LAYER_31 = 1073741824
+Const CP_LAYER_32 = -2147483648
+Const CP_LAYER_ALL = -1
+Const CP_NO_GROUP = 0
+
+Const CP_JOINT_TYPE_PIVOT = 1
+Const CP_JOINT_TYPE_GEAR = 2
+Const CP_JOINT_TYPE_RATCHED = 3
+Const CP_JOINT_TYPE_ROTARY_LIMIT = 4
+Const CP_JOINT_TYPE_GROOVE = 5
+Const CP_JOINT_TYPE_PIN = 6
+Const CP_JOINT_TYPE_SLIDE = 7
+Const CP_JOINT_TYPE_SPRING = 8
+
+Const CP_CONSTRAINT_LIST_DEFAULT_SIZE = 5
+Const CP_SHAPE_LIST_DEFAULT_SIZE = 5
+
+Type CP_SHAPE_TYPE
+    Field shape
+EndType
+
+Type CP_BODY_TYPE
+    Field body
+EndType
+
+Global CP_DYNAMIC_BODY_COUNT,CP_OUT_MEMBLOCK,CP_OUT_MEMBLOCK_SIZE,CP_IN_MEMBLOCK,CP_IN_MEMBLOCK_SIZE
+Global CP_GLOBAL_X As Float,CP_GLOBAL_Y As Float,CP_GLOBAL_NORMAL_X As Float ,CP_GLOBAL_NORMAL_Y As Float,CP_GLOBAL_DISTANCE As Float 
+Global CP_DEBUG_DRAW_SHAPE_COLOR_R,CP_DEBUG_DRAW_SHAPE_COLOR_G,CP_DEBUG_DRAW_SHAPE_COLOR_B
+Global CP_DEBUG_DRAW_COLLISION_POINT_COLOR_R,CP_DEBUG_DRAW_COLLISION_POINT_COLOR_G,CP_DEBUG_DRAW_COLLISION_POINT_COLOR_B
+CP_DEBUG_DRAW_SHAPE_COLOR_R = 255:CP_DEBUG_DRAW_SHAPE_COLOR_G = 255:CP_DEBUG_DRAW_SHAPE_COLOR_B = 255
+CP_DEBUG_DRAW_COLLISION_POINT_COLOR_R = 255:CP_DEBUG_DRAW_COLLISION_POINT_COLOR_G = 0:CP_DEBUG_DRAW_COLLISION_POINT_COLOR_B = 0
+Global CP_INFINITY As Float
+CP_INFINITY = 1.0/0.0
+
+CP_OUT_MEMBLOCK_SIZE = 200
+CP_IN_MEMBLOCK_SIZE = 2000
+CP_IN_MEMBLOCK = MakeMEMBlock(CP_IN_MEMBLOCK_SIZE)
+CP_OUT_MEMBLOCK = MakeMEMBlock(CP_OUT_MEMBLOCK_SIZE)
+CP_DYNAMIC_BODY_COUNT = 0
+
+Const CP_MAIN_STATIC_BODY = 0
+
+Function cpVecNew(x#,y#)
+    mem = MakeMEMBlock(8)
+    PokeFloat mem,0,x
+    PokeFloat mem,4,y
+    Return mem
+EndFunction
+
+Function cpVecX(vec)
+    Return PeekFloat(vec,0)
+EndFunction
+Function cpVecY(vec)
+    Return PeekFloat(vec,4)
+EndFunction
+Function cpSetVecX(vec,x#)
+    PokeFloat vec,0,x#
+EndFunction
+Function cpSetVecY(vec,y#)
+    PokeFloat vec,4,y
+EndFunction
+
+Function cpPeekVec(mem,pos)
+    ret = MakeMEMBlock(8)
+    MemCopy mem,pos,ret,0,8
+    Return ret
+EndFunction
+Function cpPokeVec(mem,pos,vec)
+    MemCopy vec,0,mem,pos,8
+EndFunction
+
+
+Function cpSetGravity(x#,y#)
+    PokeFloat CP_OUT_MEMBLOCK,0,x
+    PokeFloat CP_OUT_MEMBLOCK,4,y
+    CallDLL CP_DLL_PATH,"setgravity",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpBodyNew(mass#,inertia#,x# = 0,y# = 0)
+    body = MakeMEMBlock(45)
+    PokeFloat CP_OUT_MEMBLOCK,0,mass
+    PokeFloat CP_OUT_MEMBLOCK,4,inertia
+    PokeInt CP_OUT_MEMBLOCK,8,body
+    PokeFloat CP_OUT_MEMBLOCK,12,x
+    PokeFloat CP_OUT_MEMBLOCK,16,y
+    
+    CallDLL CP_DLL_PATH,"bodynew",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    
+    PokeByte body,CP_INDEX_MEMBLOCK_TYPE,CP_TYPE_BODY
+    MemCopy CP_IN_MEMBLOCK,0,body,CP_INDEX_BODY_DLL_INDEX,36
+    
+    b.CP_BODY_TYPE = New(CP_BODY_TYPE)
+    b\body = body
+    PokeInt body,CP_INDEX_BODY_TYPE_PTR,ConvertToInteger(b)
+    
+    CP_DYNAMIC_BODY_COUNT = CP_DYNAMIC_BODY_COUNT + 1    
+    If CP_IN_MEMBLOCK_SIZE < CP_DYNAMIC_BODY_COUNT * 28 Then //Varmistetaan että tila riittä cpPullAllia varten.
+        CP_IN_MEMBLOCK_SIZE = CP_IN_MEMBLOCK_SIZE * 2
+        ResizeMEMBlock CP_IN_MEMBLOCK,CP_IN_MEMBLOCK_SIZE
+    EndIf
+        
+        
+    Return body
+EndFunction
+
+Function cpBodyNewStatic(x# = 0,y# = 0)
+    body = MakeMEMBlock(45)
+    PokeInt CP_OUT_MEMBLOCK,0,body
+    PokeFloat CP_OUT_MEMBLOCK,4,x
+    PokeFloat CP_OUT_MEMBLOCK,8,x
+    CallDLL CP_DLL_PATH,"bodynewstatic",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    MemCopy CP_IN_MEMBLOCK,0,body,CP_INDEX_BODY_DLL_INDEX,28
+    PokeByte body,0,CP_TYPE_BODY
+    PokeFloat body,CP_INDEX_BODY_MASS,0
+    PokeFloat body,CP_INDEX_BODY_INERTIA,0
+    
+    b.CP_BODY_TYPE = New(CP_BODY_TYPE)
+    b\body = body
+    PokeInt body,CP_INDEX_BODY_TYPE_PTR,ConvertToInteger(b)
+    Return body
+EndFunction
+
+
+Function cpBinOr(l1,l2)
+    l3 = 0
+    For i = 0 To 31 //Käydän läpi kaikki bitit
+        l3 = l3 + (((l1 Shr i) Or (l2 Shr i)) Shl i)
+    Next i
+EndFunction
+
+Function cpBinAnd(l1,l2)
+    l3 = 0
+    For i = 0 To 31 //Käydän läpi kaikki bitit
+        l3 = l3 + (((l1 Shl (31-i) Shr 31) And ((l2 Shl (31-i)) Shr 31)) Shl i)
+    Next i
+    Return l3
+EndFunction
+
+
+Function cpBinXor(l1,l2)
+    l3 = 0
+    For i = 0 To 31 //Käydän läpi kaikki bitit
+        l3 = l3 + (((l1 Shl (31-i) Shr 31) Xor ((l2 Shl (31-i)) Shr 31)) Shl i)
+    Next i
+    Return l3
+EndFunction
+
+Function cpCanCollide(group1,layers1,group2,layers2)
+    Return  ((group1 <> group2) Or (group1 = 0 And group2 = 0)) And cpBinAnd(layers1,layers2)
+EndFunction
+
+Function cpBoxGeometryNew(w#,h#)
+    mem = MakeMEMBlock(9)
+    PokeByte mem,0,CP_GEOMETRY_BOX
+    PokeFloat mem,1,w
+    PokeFloat mem,5,h
+    Return mem
+EndFunction
+
+Function cpSegmentGeometryNew(p1x#,p1y#,p2x#,p2y#,radius# = 1)
+    mem = MakeMEMBlock(21)
+    PokeByte mem,0,CP_GEOMETRY_SEGMENT
+    PokeFloat mem,1,p1x
+    PokeFloat mem,5,p1y
+    PokeFloat mem,9,p2x
+    PokeFloat mem,13,p2y
+    PokeFloat mem,17,radius
+    Return mem
+EndFunction
+
+Function cpCircleGeometryNew(r#,r2# = 0)
+    mem = MakeMEMBlock(9)
+    PokeByte mem,0,CP_GEOMETRY_CIRCLE
+    PokeFloat mem,1,r
+    PokeFloat mem,5,r2
+    Return mem
+EndFunction
+
+Function cpPolyGeometryNew(vertexcount)
+    mem = MakeMEMBlock(5+8*vertexcount)
+    PokeByte mem,0,CP_GEOMETRY_POLYGON
+    PokeInt mem,1,vertexcount
+    Return mem
+EndFunction
+
+Function cpPolyGeometrySetVertex(poly,i,x#,y#)
+    PokeFloat poly,5+8*i,x#
+    PokeFloat poly,9+8*i,y#
+EndFunction
+
+Function cpPolyGeometryReCenter(poly)
+    size = MEMBlockSize(poly)
+    MemCopy poly,1,CP_OUT_MEMBLOCK,0,size-1
+    CallDLL CP_DLL_PATH,"recenterpolygon",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    MemCopy CP_IN_MEMBLOCK,0,poly,5,size-5
+EndFunction
+
+
+Function cpSetIterations(iterations)
+    PokeInt CP_OUT_MEMBLOCK,0,iterations
+    CallDLL CP_DLL_PATH,"setiterations",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpShapeNew(body,geometry,layer = -1,group = 0,offsetVecX# = 0,offsetVecY# = 0,friction# = 0.7,restitution# = 0.3)
+    shape = MakeMEMBlock(45)
+    
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(body,CP_INDEX_BODY_DLL_INDEX)
+    PokeInt CP_OUT_MEMBLOCK,4,shape
+    PokeFloat CP_OUT_MEMBLOCK,8,offsetVecX#
+    PokeFloat CP_OUT_MEMBLOCK,12,offsetVecY#
+    PokeFloat CP_OUT_MEMBLOCK,16,friction
+    PokeFloat CP_OUT_MEMBLOCK,20,restitution
+    PokeInt CP_OUT_MEMBLOCK,24,layer
+    PokeInt CP_OUT_MEMBLOCK,28,group
+    MemCopy geometry,0,CP_OUT_MEMBLOCK,32,MEMBlockSize(geometry)
+    CallDLL CP_DLL_PATH,"shapenew",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    
+    PokeByte shape,0,CP_TYPE_SHAPE
+    PokeInt shape,CP_INDEX_SHAPE_DLL_INDEX,PeekInt(CP_IN_MEMBLOCK,0)//DLL INDEX
+    PokeInt shape,CP_INDEX_SHAPE_OWNER,body
+    MemCopy CP_OUT_MEMBLOCK,8,shape,CP_INDEX_SHAPE_OFFSET,24
+    PokeInt shape,CP_INDEX_SHAPE_GEOMETRY,geometry
+    PokeInt shape,CP_INDEX_SHAPE_USERDATA,0
+    s.CP_SHAPE_TYPE = New (CP_SHAPE_TYPE)
+    s\shape = shape
+    PokeInt shape,CP_INDEX_SHAPE_TYPE_PTR,ConvertToInteger(s)
+    
+    
+    Return shape
+EndFunction
+
+Function cpShapeNewStatic(geometry,layer = -1,group = 0,offsetVecX# = 0,offsetVecY# = 0,friction# = 0.7,restitution# = 0.3)
+    If Not offsetVec Then offsetVec = cpVecNew(0,0)
+    shape = MakeMEMBlock(41)
+    PokeInt CP_OUT_MEMBLOCK,0,shape
+    PokeFloat CP_OUT_MEMBLOCK,4,offsetVecX#
+    PokeFloat CP_OUT_MEMBLOCK,8,offsetVecY#
+    PokeFloat CP_OUT_MEMBLOCK,12,friction
+    PokeFloat CP_OUT_MEMBLOCK,16,restitution
+    PokeInt CP_OUT_MEMBLOCK,20,layer
+    PokeInt CP_OUT_MEMBLOCK,24,group
+    MemCopy geometry,0,CP_OUT_MEMBLOCK,28,MEMBlockSize(geometry)
+    
+    CallDLL CP_DLL_PATH,"shapenewstatic",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+
+    PokeByte shape,0,CP_TYPE_SHAPE
+    PokeInt shape,CP_INDEX_SHAPE_DLL_INDEX,PeekInt(CP_IN_MEMBLOCK,0)
+    PokeInt shape,CP_INDEX_SHAPE_OWNER,CP_MAIN_STATIC_BODY
+    MemCopy CP_OUT_MEMBLOCK,4,shape,CP_INDEX_SHAPE_OFFSET,24
+    PokeInt shape,CP_INDEX_SHAPE_GEOMETRY,geometry
+    PokeInt shape,CP_INDEX_SHAPE_USERDATA,0
+    s.CP_SHAPE_TYPE = New (CP_SHAPE_TYPE)
+    s\shape = shape
+    PokeInt shape,CP_INDEX_SHAPE_TYPE_PTR,ConvertToInteger(s)
+    
+    Return shape
+EndFunction
+
+
+
+Function cpPull(obj)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(obj,CP_INDEX_BODY_DLL_INDEX)
+    CallDLL CP_DLL_PATH,"pull",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    MemCopy CP_IN_MEMBLOCK,0,obj,CP_INDEX_BODY_ANGLE,24
+    Return obj
+EndFunction
+
+Function cpPush(obj)
+    t As Byte = PeekByte(obj,CP_INDEX_MEMBLOCK_TYPE)
+    If t = CP_TYPE_BODY Then
+        MemCopy obj,CP_INDEX_BODY_DLL_INDEX,CP_OUT_MEMBLOCK,0,28
+    ElseIf t = CP_TYPE_SHAPE
+        PokeInt CP_OUT_MEMBLOCK,0,PeekInt(obj,CP_INDEX_SHAPE_DLL_INDEX)
+        MemCopy obj,CP_INDEX_SHAPE_FRICTION,CP_OUT_MEMBLOCK,4,24
+    EndIf
+    CallDLL CP_DLL_PATH,"push",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpPullAll()
+    //If CP_IN_MEMBLOCK_SIZE < CP_DYNAMIC_BODY_COUNT*28 Then
+    //    CP_IN_MEMBLOCK_SIZE = CP_IN_MEMBLOCK_SIZE * 2
+    //    ResizeMEMBlock CP_IN_MEMBLOCK,CP_IN_MEMBLOCK_SIZE
+    //EndIf
+    CallDLL CP_DLL_PATH,"pullall",0,CP_IN_MEMBLOCK
+    //bodies = PeekInt(CP_IN_MEMBLOCK,0)
+    index = 0
+    For i = 1 To CP_DYNAMIC_BODY_COUNT
+        body = PeekInt(CP_IN_MEMBLOCK,index)
+        MemCopy CP_IN_MEMBLOCK,index+4,body,CP_INDEX_BODY_ANGLE,24
+        index = index + 28
+    Next i
+    
+EndFunction
+
+Function cpApplyImpulse(body,fx#,fy#,px#,py#)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(body,CP_INDEX_BODY_DLL_INDEX)
+    PokeFloat CP_OUT_MEMBLOCK,4,fx#
+    PokeFloat CP_OUT_MEMBLOCK,8,fy#
+    PokeFloat CP_OUT_MEMBLOCK,12,px#
+    PokeFloat CP_OUT_MEMBLOCK,16,py#
+    CallDLL CP_DLL_PATH,"bodyapplyimpulse",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpApplyForce(body,fx#,fy#,px#,py#)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(body,CP_INDEX_BODY_DLL_INDEX)
+    PokeFloat CP_OUT_MEMBLOCK,4,fx#
+    PokeFloat CP_OUT_MEMBLOCK,8,fy#
+    PokeFloat CP_OUT_MEMBLOCK,12,px#
+    PokeFloat CP_OUT_MEMBLOCK,16,py#
+    CallDLL CP_DLL_PATH,"bodyapplyforce",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpAutoClearForces(t As Byte)
+    PokeByte CP_OUT_MEMBLOCK,0,t
+    CallDLL CP_DLL_PATH,"setautoclearforces",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpUpdate(timestep#)
+    PokeFloat CP_OUT_MEMBLOCK,0,timestep
+    CallDLL CP_DLL_PATH,"update",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpWaitForUpdate()
+    CallDLL CP_DLL_PATH,"waitforupdate",0,CP_IN_MEMBLOCK
+    Return PeekFloat(CP_IN_MEMBLOCK,0)
+EndFunction
+
+Function cpAreaForGeometry(geometry)
+    t As Byte = PeekByte(geometry,0)
+    Select t
+        Case 5
+            Return PeekFloat(geometry,1)^2*PI-PeekFloat(geometry,5)^2*PI
+        Case 4
+            Return PeekFloat(geometry,1)*PeekFloat(geometry,5)
+        Case 7
+            MemCopy geometry,1,CP_OUT_MEMBLOCK,0,20
+            CallDLL CP_DLL_PATH,"areaforsegment",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+            Return PeekFloat(CP_IN_MEMBLOCK,0)
+        Case 6
+            MemCopy geometry,1,CP_OUT_MEMBLOCK,0,MEMBlockSize(geometry)-1
+            CallDLL CP_DLL_PATH,"areaforpolygon",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+            Return PeekFloat(CP_IN_MEMBLOCK,0)
+        Default
+            MakeError "Invalid geometry in cpAreaForGeometry"
+        
+    EndSelect
+
+EndFunction
+
+Function cpMomentForGeometry(geometry,mass#,offsetX# = 0,offsetY# = 0)
+    t As Byte = PeekByte(geometry,0)
+    Select t
+        Case 5
+            PokeFloat CP_OUT_MEMBLOCK,0,mass
+            MemCopy geometry,1,CP_OUT_MEMBLOCK,4,8
+            PokeFloat CP_OUT_MEMBLOCK,12,offsetX
+            PokeFloat CP_OUT_MEMBLOCK,16,offsetY
+            CallDLL CP_DLL_PATH,"momentforcircle",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+        Case 4
+            PokeFloat CP_OUT_MEMBLOCK,0,mass
+            MemCopy geometry,1,CP_OUT_MEMBLOCK,4,8
+            PokeFloat CP_OUT_MEMBLOCK,12,offsetX
+            PokeFloat CP_OUT_MEMBLOCK,16,offsetY
+            CallDLL CP_DLL_PATH,"momentforbox",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+        Case 7
+            PokeFloat CP_OUT_MEMBLOCK,0,mass
+            MemCopy geometry,1,CP_OUT_MEMBLOCK,4,16
+            PokeFloat CP_OUT_MEMBLOCK,20,offsetX
+            PokeFloat CP_OUT_MEMBLOCK,24,offsetY
+            CallDLL CP_DLL_PATH,"momentforsegment",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+        Case 6
+            PokeFloat CP_OUT_MEMBLOCK,0,mass
+            PokeFloat CP_OUT_MEMBLOCK,4,offsetX
+            PokeFloat CP_OUT_MEMBLOCK,8,offsetY
+            MemCopy geometry,1,CP_OUT_MEMBLOCK,12,MEMBlockSize(geometry)-1
+            CallDLL CP_DLL_PATH,"momentforpolygon",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+        Default
+            MakeError "Invalid geometry in cpMomentForGeometry"
+        
+    EndSelect
+    Return PeekFloat(CP_IN_MEMBLOCK,0)
+EndFunction
+
+Function cpPinJointNew(body1,body2,p1x#,p1y#,p2x#,p2y#)
+    pinJoint = MakeMEMBlock(30)
+    PokeInt CP_OUT_MEMBLOCK,0,pinJoint
+    MemCopy body1,CP_INDEX_BODY_DLL_INDEX,CP_OUT_MEMBLOCK,4,4
+    MemCopy body2,CP_INDEX_BODY_DLL_INDEX,CP_OUT_MEMBLOCK,8,4
+    PokeFloat CP_OUT_MEMBLOCK,12,p1x#
+    PokeFloat CP_OUT_MEMBLOCK,16,p1y#
+    PokeFloat CP_OUT_MEMBLOCK,20,p2x#
+    PokeFloat CP_OUT_MEMBLOCK,24,p2y#
+    CallDLL CP_DLL_PATH,"pinjointnew",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    PokeByte pinjoint,0,CP_TYPE_CONSTRAINT
+    MemCopy CP_IN_MEMBLOCK,0,pinjoint,CP_INDEX_CONSTRAINT_DLL_INDEX,4
+    MemCopy CP_OUT_MEMBLOCK,4,pinjoint,CP_INDEX_CONSTRAINT_BODY1,8 //Kopioidaan runkojen osoitteet
+    PokeByte pinjoint,CP_INDEX_CONSTRAINT_TYPE,CP_JOINT_TYPE_PIN //Merkataan pinjoitiksi
+    MemCopy CP_OUT_MEMBLOCK,12,pinjoint,CP_INDEX_PIN_JOINT_POINT1,16 //Kopioidaan pisteet
+    Return pinjoint
+EndFunction
+
+Function cpSlideJointNew(body1,body2,mind#,maxd#,p1x#,p1y#,p2x#,p2y#)
+    slideJoint = MakeMEMBlock(38)
+    PokeInt CP_OUT_MEMBLOCK,0,slideJoint
+    MemCopy body1,CP_INDEX_BODY_DLL_INDEX,CP_OUT_MEMBLOCK,4,4
+    MemCopy body2,CP_INDEX_BODY_DLL_INDEX,CP_OUT_MEMBLOCK,8,4
+    PokeFloat CP_OUT_MEMBLOCK,12,p1x#
+    PokeFloat CP_OUT_MEMBLOCK,16,p1y#
+    PokeFloat CP_OUT_MEMBLOCK,20,p2x#
+    PokeFloat CP_OUT_MEMBLOCK,24,p2y#
+    PokeFloat CP_OUT_MEMBLOCK,28,mind#
+    PokeFloat CP_OUT_MEMBLOCK,32,maxd#
+    CallDLL CP_DLL_PATH,"slidejointnew",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    PokeByte slidejoint,0,CP_TYPE_CONSTRAINT
+    MemCopy CP_IN_MEMBLOCK,0,slidejoint,CP_INDEX_CONSTRAINT_DLL_INDEX,4
+    MemCopy CP_OUT_MEMBLOCK,4,slidejoint,CP_INDEX_CONSTRAINT_BODY1,8 //Kopioidaan runkojen osoitteet
+    PokeByte slidejoint,CP_INDEX_CONSTRAINT_TYPE,CP_JOINT_TYPE_SLIDE //Merkataan pinjoitiksi
+    MemCopy CP_OUT_MEMBLOCK,12,slidejoint,CP_INDEX_SLIDE_JOINT_POINT1,24 //Kopioidaan pisteet ja maksimi ja minimi
+    Return slidejoint
+EndFunction
+
+Function cpPivotJointNew(body1,body2,p1x#,p1y#,p2x#,p2y#)
+    pivotJoint = MakeMEMBlock(30)
+    PokeInt CP_OUT_MEMBLOCK,0,pivotJoint
+    MemCopy body1,CP_INDEX_BODY_DLL_INDEX,CP_OUT_MEMBLOCK,4,4
+    MemCopy body2,CP_INDEX_BODY_DLL_INDEX,CP_OUT_MEMBLOCK,8,4
+    PokeFloat CP_OUT_MEMBLOCK,12,p1x#
+    PokeFloat CP_OUT_MEMBLOCK,16,p1y#
+    PokeFloat CP_OUT_MEMBLOCK,20,p2x#
+    PokeFloat CP_OUT_MEMBLOCK,24,p2y#
+    CallDLL CP_DLL_PATH,"pivotjointnew",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    PokeByte pivotjoint,0,CP_TYPE_CONSTRAINT
+    MemCopy CP_IN_MEMBLOCK,0,pivotjoint,CP_INDEX_CONSTRAINT_DLL_INDEX,4
+    MemCopy CP_OUT_MEMBLOCK,4,pivotjoint,CP_INDEX_CONSTRAINT_BODY1,8 //Kopioidaan runkojen osoitteet
+    PokeByte pivotjoint,CP_INDEX_CONSTRAINT_TYPE,CP_JOINT_TYPE_PIVOT //Merkataan pinjoitiksi
+    MemCopy CP_OUT_MEMBLOCK,12,pivotjoint,CP_INDEX_PIVOT_JOINT_POINT1,16 //Kopioidaan pisteet
+    Return pivotjoint
+EndFunction
+
+Function cpRotaryLimitJointNew(body1,body2,minRot#,maxRot#)
+    joint = MakeMEMBlock(22)
+    PokeInt CP_OUT_MEMBLOCK,0,joint
+    MemCopy body1,CP_INDEX_BODY_DLL_INDEX,CP_OUT_MEMBLOCK,4,4
+    MemCopy body2,CP_INDEX_BODY_DLL_INDEX,CP_OUT_MEMBLOCK,8,4
+    PokeFloat CP_OUT_MEMBLOCK,12,minRot#
+    PokeFloat CP_OUT_MEMBLOCK,16,maxRot#
+    CallDLL CP_DLL_PATH,"rotarylimitjointnew",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    PokeByte joint,0,CP_TYPE_CONSTRAINT
+    MemCopy CP_IN_MEMBLOCK,0,joint,CP_INDEX_CONSTRAINT_DLL_INDEX,4
+    MemCopy CP_OUT_MEMBLOCK,4,joint,CP_INDEX_CONSTRAINT_BODY1,8 //Kopioidaan runkojen osoitteet
+    PokeByte joint,CP_INDEX_CONSTRAINT_TYPE,CP_JOINT_TYPE_ROTARY_LIMIT //Merkataan
+    MemCopy CP_OUT_MEMBLOCK,12,joint,CP_INDEX_ROTARY_LIMIT_JOINT_MIN,8 //Kopioidaan  maksimi ja minimi
+    Return joint
+EndFunction
+
+Function cpGrooveJointNew(body1,body2,p1x#,p1y#,p2x#,p2y#,p3x#,p3y#)
+    joint = MakeMEMBlock(34)
+    PokeInt CP_OUT_MEMBLOCK,0,joint
+    MemCopy body1,CP_INDEX_BODY_DLL_INDEX,CP_OUT_MEMBLOCK,4,4
+    MemCopy body2,CP_INDEX_BODY_DLL_INDEX,CP_OUT_MEMBLOCK,8,4
+    PokeFloat CP_OUT_MEMBLOCK,12,p1x#
+    PokeFloat CP_OUT_MEMBLOCK,16,p1y#
+    PokeFloat CP_OUT_MEMBLOCK,20,p2x#
+    PokeFloat CP_OUT_MEMBLOCK,24,p2y#
+    PokeFloat CP_OUT_MEMBLOCK,28,p3x#
+    PokeFloat CP_OUT_MEMBLOCK,32,p3y#
+    CallDLL CP_DLL_PATH,"groovejointnew",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    PokeByte joint,0,CP_TYPE_CONSTRAINT
+    MemCopy CP_IN_MEMBLOCK,0,joint,CP_INDEX_CONSTRAINT_DLL_INDEX,4
+    MemCopy CP_OUT_MEMBLOCK,4,joint,CP_INDEX_CONSTRAINT_BODY1,8 //Kopioidaan runkojen osoitteet
+    PokeByte joint,CP_INDEX_CONSTRAINT_TYPE,CP_JOINT_TYPE_GROOVE //Merkataan
+    MemCopy CP_OUT_MEMBLOCK,12,joint,CP_INDEX_GROOVE_JOINT_POINT1,24 //Kopioidaan  pisteet
+    Return joint
+EndFunction
+
+Function cpDampedSpringNew(body1,body2,restLen#,stiffness#,damping#,p1x#=0,p1y#=0,p2x#=0,p2y#=0)
+    joint = MakeMEMBlock(38)
+    PokeInt CP_OUT_MEMBLOCK,0,joint
+    MemCopy body1,CP_INDEX_BODY_DLL_INDEX,CP_OUT_MEMBLOCK,4,4
+    MemCopy body2,CP_INDEX_BODY_DLL_INDEX,CP_OUT_MEMBLOCK,8,4
+    PokeFloat CP_OUT_MEMBLOCK,12,p1x#
+    PokeFloat CP_OUT_MEMBLOCK,16,p1y#
+    PokeFloat CP_OUT_MEMBLOCK,20,p2x#
+    PokeFloat CP_OUT_MEMBLOCK,24,p2y#
+    PokeFloat CP_OUT_MEMBLOCK,28,restLen#
+    PokeFloat CP_OUT_MEMBLOCK,32,stiffness#
+    PokeFloat CP_OUT_MEMBLOCK,36,damping#
+    CallDLL CP_DLL_PATH,"dampedspringnew",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    PokeByte joint,0,CP_TYPE_CONSTRAINT
+    MemCopy CP_IN_MEMBLOCK,0,joint,CP_INDEX_CONSTRAINT_DLL_INDEX,4
+    MemCopy CP_OUT_MEMBLOCK,4,joint,CP_INDEX_CONSTRAINT_BODY1,8 //Kopioidaan runkojen osoitteet
+    PokeByte joint,CP_INDEX_CONSTRAINT_TYPE,CP_JOINT_TYPE_SPRING //Merkataan
+    MemCopy CP_OUT_MEMBLOCK,12,joint,CP_INDEX_GROOVE_JOINT_POINT1,28 //Kopioidaan pisteet ja muut tiedot
+    Return joint
+EndFunction
+
+Function cpApplyTorque(body,torque#)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(body,CP_INDEX_BODY_DLL_INDEX)
+    PokeFloat CP_OUT_MEMBLOCK,4,torque#
+    CallDLL CP_DLL_PATH,"applytorque",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpBodySetPos(body,x#,y#)
+    PokeFloat body,CP_INDEX_BODY_POS_X,x#
+    PokeFloat body,CP_INDEX_BODY_POS_Y,y#
+EndFunction
+
+Function cpBodySetAngle#(body,angle#)
+    PokeFloat body,CP_INDEX_BODY_ANGLE,angle#
+EndFunction
+
+Function cpBodyGetPosX(body)
+    Return PeekFloat(body,CP_INDEX_BODY_POS_X)
+EndFunction
+Function cpBodyGetPosY(body)
+    Return PeekFloat(body,CP_INDEX_BODY_POS_Y)
+EndFunction
+Function cpBodyGetAngle(body)
+    Return PeekFloat(body,CP_INDEX_BODY_ANGLE)
+EndFunction
+Function cpBodyReset(body,resetPos = 0)
+    PokeFloat body,CP_INDEX_BODY_ANGLE,0
+    PokeFloat body,CP_INDEX_BODY_ANGULAR_VELOCITY,0
+    PokeFloat body,CP_INDEX_BODY_VELOCITY_X,0
+    PokeFloat body,CP_INDEX_BODY_VELOCITY_Y,0
+    If resetPos Then
+        PokeFloat body,CP_INDEX_BODY_POS_X,0
+        PokeFloat body,CP_INDEX_BODY_POS_Y,0
+    EndIf
+EndFunction
+
+Function cpDelete(obj)
+    t As Byte = PeekByte(obj,0)
+    Select t
+        Case 1 //Body
+            PokeInt CP_OUT_MEMBLOCK,0,PeekInt(obj,CP_INDEX_DLL_INDEX)
+            CallDLL CP_DLL_PATH,"deletevar",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+            index = 0
+            deleteThis = PeekInt(CP_IN_MEMBLOCK,index)
+            While deleteThis
+                If PeekByte(deleteThis,0) = CP_TYPE_SHAPE Then
+                    s.CP_SHAPE_TYPE = ConvertToType(PeekInt(deleteThis,CP_INDEX_SHAPE_TYPE_PTR))
+                    Delete s
+                EndIf
+                DeleteMEMBlock deleteThis
+                index = index + 4
+                deleteThis = PeekInt(CP_IN_MEMBLOCK,index)
+            Wend
+            b.CP_BODY_TYPE = ConvertToType(PeekInt(obj,CP_INDEX_BODY_TYPE_PTR))
+            Delete b
+            DeleteMEMBlock obj
+            If PeekFloat(obj,CP_BODY_INDEX_MASS) <>0 And PeekFloat(obj,CP_BODY_INDEX_INERTIA) <> 0  Then CP_DYNAMIC_BODY_COUNT = CP_DYNAMIC_BODY_COUNT - 1
+        Case 2 //Shape
+            PokeInt CP_OUT_MEMBLOCK,0,PeekInt(obj,CP_INDEX_DLL_INDEX)
+            CallDLL CP_DLL_PATH,"deletevar",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+            s.CP_SHAPE_TYPE = ConvertToType(PeekInt(obj,CP_INDEX_SHAPE_TYPE_PTR))
+            Delete s
+            DeleteMEMBlock obj
+        Case 3 //Constraint
+            PokeInt CP_OUT_MEMBLOCK,0,PeekInt(obj,CP_INDEX_DLL_INDEX)
+            CallDLL CP_DLL_PATH,"deletevar",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+            DeleteMEMBlock obj
+        Default
+            DeleteMEMBlock obj
+    EndSelect
+EndFunction
+
+Function cpShapeUnderPoint(x#,y#,layers = -1,group = 0)
+    PokeFloat CP_OUT_MEMBLOCK,0,x#
+    PokeFloat CP_OUT_MEMBLOCK,4,y#
+    PokeInt CP_OUT_MEMBLOCK,8,layers
+    PokeInt CP_OUT_MEMBLOCK,12,group
+    CallDLL CP_DLL_PATH,"shapeunderpoint",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    Return PeekInt(CP_IN_MEMBLOCK,0)
+EndFunction
+
+
+Function cpShapeSetFriction(shape,friction#)
+    PokeFloat shape,CP_INDEX_SHAPE_FRICTION,friction#
+EndFunction
+
+Function cpShapeSetRestitution(shape,restitution#)
+    PokeFloat shape,CP_INDEX_SHAPE_RESTITUTION,restitution#
+EndFunction
+
+Function cpShapeGetFriction(shape)
+    Return PeekFloat(shape,CP_INDEX_SHAPE_FRICTION)
+EndFunction
+
+Function cpShapeGetRestitution(shape)
+    Return PeekFloat(shape,CP_INDEX_SHAPE_RESTITUTION)
+EndFunction
+
+Function cpBorderNew(geometry,r# = 1,layer = 1,group = 0,offsetVecX# = 0,offsetVecY# = 0,friction# = 0.7,restitution# = 0.3)
+    If PeekByte(geometry,0) <> CP_GEOMETRY_BOX Then
+        MakeError "cpOpenBoxShapeNew needs cpBoxGeometry"
+    EndIf
+    
+    w# = PeekFloat(geometry,1)
+    h# = PeekFloat(geometry,5)
+    leftRightSides = cpSegmentGeometryNew(0,h#*0.5,0,-h#*0.5,r#)
+    topBottomSides = cpSegmentGeometryNew(w#*0.5,0,-w#*0.5,0,r#)
+    leftside = cpShapeNewStatic(leftRightSides,layer,group,offsetVecX-w#*0.5,offsetVecY#,friction,restitution)
+    rightside = cpShapeNewStatic(leftRightSides,layer,group,offsetVecX+w#*0.5,offsetVecY#,friction,restitution)
+    topSide = cpShapeNewStatic(topBottomSides,layer,group,offsetVecX,offsetVecY#+h#*0.5,friction,restitution)
+    bottomSide = cpShapeNewStatic(topBottomSides,layer,group,offsetVecX,offsetVecY#-h#*0.5,friction,restitution)
+EndFunction
+
+Function cpBodyWorldToLocal(body,x#,y#)
+    bx# = PeekFloat(body,CP_INDEX_BODY_POS_X)
+    by# = PeekFloat(body,CP_INDEX_BODY_POS_Y)
+    angle# = PeekFloat(body,CP_INDEX_BODY_ANGLE)
+    rotX# = Cos(angle#)
+    rotY# = Sin(angle#)
+    x# = x# - bx#
+    y# = y# - by#
+    
+    CP_GLOBAL_X = x#*rotX# + y#*rotY#
+    CP_GLOBAL_Y = y#*rotX# - x#*rotY#
+EndFunction
+
+Function cpBodyLocalToWorld(body,x#,y#)
+    bx# = PeekFloat(body,CP_INDEX_BODY_POS_X)
+    by# = PeekFloat(body,CP_INDEX_BODY_POS_Y)
+    angle# = PeekFloat(body,CP_INDEX_BODY_ANGLE)
+    rotX# = Cos(angle#)
+    rotY# = Sin(angle#)
+    px# = x#*rotX# - y#*rotY#
+    py# = x#*rotY# + y#*rotX#
+    CP_GLOBAL_X = bx# + px#
+    CP_GLOBAL_Y = by# + py#
+EndFunction
+
+Function cpArbiterListSize(list)
+    If list = 0 Then Return 0
+    Return MEMBlockSize(list)/4
+EndFunction
+Function cpArbiterListGet(list,index)
+    Return PeekInt(list,index*4)
+EndFunction
+
+Function cpDeleteArbiterList(list)
+    size = (MEMBlockSize(list)/4)-1
+    For i = 0 To size
+        DeleteMEMBlock PeekInt(list,i*4)
+    Next i
+    DeleteMEMBlock list
+EndFunction
+
+
+Function cpArbiterGetBody1(arbiter)
+    Return PeekInt(arbiter,CP_INDEX_ARBITER_BODY1)
+EndFunction
+
+Function cpArbiterGetBody2(arbiter)
+    Return PeekInt(arbiter,CP_INDEX_ARBITER_BODY2)
+EndFunction
+
+Function cpArbiterGetShape1(arbiter)
+    Return PeekInt(arbiter,CP_INDEX_ARBITER_SHAPE1)
+EndFunction
+Function cpArbiterGetShape2(arbiter)
+    Return PeekInt(arbiter,CP_INDEX_ARBITER_SHAPE2)
+EndFunction
+
+Function cpArbiterGetTotalImpulse(arbiter)
+    CP_GLOBAL_X = PeekFloat(arbiter,CP_INDEX_ARBITER_TOTAL_IMPULSE_X)
+    CP_GLOBAL_Y = PeekFloat(arbiter,CP_INDEX_ARBITER_TOTAL_IMPULSE_Y)
+EndFunction
+Function cpArbiterGetTotalImpulseX(arbiter)
+    Return PeekFloat(arbiter,CP_INDEX_ARBITER_TOTAL_IMPULSE_X)
+EndFunction
+Function cpArbiterGetTotalImpulseY(arbiter)
+    Return PeekFloat(arbiter,CP_INDEX_ARBITER_TOTAL_IMPULSE_Y)
+EndFunction
+
+Function cpArbiterGetTotalImpulseWithFriction(arbiter)
+    CP_GLOBAL_X = PeekFloat(arbiter,CP_INDEX_ARBITER_TOTAL_IMPULSE_WITH_FRICTION_X)
+    CP_GLOBAL_Y = PeekFloat(arbiter,CP_INDEX_ARBITER_TOTAL_IMPULSE_WITH_FRICTION_Y)
+EndFunction
+Function cpArbiterGetTotalImpulseWithFrictionX(arbiter)
+    Return PeekFloat(arbiter,CP_INDEX_ARBITER_TOTAL_IMPULSE_WITH_FRICTION_X)
+EndFunction
+Function cpArbiterGetTotalImpulseWithFrictionY(arbiter)
+    Return PeekFloat(arbiter,CP_INDEX_ARBITER_TOTAL_IMPULSE_WITH_FRICTION_Y)
+EndFunction
+
+Function cpArbiterCountCollisionPoints(arbiter)
+    Return (MEMBlockSize(arbiter)-CP_INDEX_ARBITER_FIRST_POINT)/8
+EndFunction
+
+Function cpArbiterGetCollisionPointX(arbiter,index)
+    Return PeekFloat(arbiter,CP_INDEX_ARBITER_FIRST_POINT+index*8)
+EndFunction
+Function cpArbiterGetCollisionPointY(arbiter,index)
+    Return PeekFloat(arbiter,CP_INDEX_ARBITER_FIRST_POINT+4+index*8)
+EndFunction
+
+Function cpArbiterGetCollisionPoint(arbiter,index)
+    CP_GLOBAL_X = PeekFloat(arbiter,CP_INDEX_ARBITER_FIRST_POINT+index*8)
+    CP_GLOBAL_Y = PeekFloat(arbiter,CP_INDEX_ARBITER_FIRST_POINT+4+index*8)
+EndFunction
+
+Function cpBodyGetArbiters(body)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(body,CP_INDEX_BODY_DLL_INDEX)
+    CallDLL CP_DLL_PATH,"getarbiters",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    arbiterCount = PeekInt(CP_IN_MEMBLOCK,0)
+    If arbitercount = 0 Then Return 0
+    arbiterList = MakeMEMBlock(arbitercount*4)
+    inIndex = 4
+    For i = 1 To arbiterCount
+        contactPointCount = PeekInt(CP_IN_MEMBLOCK,inIndex)
+        arbiter = MakeMEMBlock(32+contactPointCount*8)
+        PokeInt arbiter,0,body
+        MemCopy CP_IN_MEMBLOCK,inIndex+4,arbiter,CP_INDEX_ARBITER_BODY2,28+contactPointCount*8
+        inIndex = inIndex + 32 + 8*contactPointCount
+        PokeInt arbiterList,(i-1)*4,arbiter
+    Next i
+    Return arbiterList
+EndFunction
+
+Function cpSetEnableContactGraph(t)
+    PokeInt CP_OUT_MEMBLOCK,0,t
+    CallDLL CP_DLL_PATH,"setenablecontactgraph",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+EndFunction
+
+
+
+Function cpDrawCircleGeometry(geometry,bx# = 0,by# = 0,offsetX# = 0,offsetY# = 0,ang# = 0)
+    rotX# = Cos(ang#)
+    rotY# = Sin(ang#)
+    px# = offsetX#*rotX# - offsetY#*rotY#
+    py# = offsetX#*rotY# + offsetY#*rotX#
+    x# = bx# + px#
+    y# = by# + py#
+    r1# = PeekFloat(geometry,1)
+    r2# = PeekFloat(geometry,5)
+    Circle x#-r1#,y#+r1#,r1#*2,0
+    Circle x#-r2#,y#+r2#,r2#*2,0
+    Line x#,y#,x#+Cos(ang#)*r1#,y#+Sin(ang#)*r1#
+EndFunction
+
+Function cpDrawPolyGeometry(geometry,bx# = 0,by# = 0,offsetX# = 0,offsetY# = 0,ang# = 0)
+    rotX# = Cos(ang#)
+    rotY# = Sin(ang#)
+    
+    count = PeekInt(geometry,1)-1
+    
+    px# = PeekFloat(geometry,5)+offsetX
+    py# = PeekFloat(geometry,9)+offsetY
+    x# = px#*rotX# - py#*rotY#
+    y# = px#*rotY# + py#*rotX#
+    firstX# = bx# + x#
+    firstY# = by# + y#
+    lastX# = firstX#
+    lastY# = firstY#
+    For i = 1 To count
+        px# = PeekFloat(geometry,5+i*8)+offsetX
+        py# = PeekFloat(geometry,9+i*8)+offsetY
+        x# = px#*rotX# - py#*rotY#
+        y# = px#*rotY# + py#*rotX#
+        px# = x# + bx#
+        py# = y# + by#
+        Line lastX,lastY,px,py
+        lastX# = px#
+        lastY# = py#
+    Next i
+    Line firstX#,firstY#,lastX#,lastY#
+    
+EndFunction
+
+Function cpDrawGeometry(geometry,bx# = 0,by# = 0,offsetX# = 0,offsetY# = 0,ang# = 0)
+    t = PeekByte(geometry,0)
+    rotX# = Cos(ang#)
+    rotY# = Sin(ang#)
+    px# = offsetX#*rotX# - offsetY#*rotY#
+    py# = offsetX#*rotY# + offsetY#*rotX#
+    Select t
+        Case 4 //Box
+            cpBox2(bx# + px#,by# + py#,PeekFloat(geometry,1),PeekFloat(geometry,5),ang#)
+        Case 5 //Circle
+            x# = bx# + px#
+            y# = by# + py#
+            r1# = PeekFloat(geometry,1)
+            r2# = PeekFloat(geometry,5)
+            Circle x#-r1#,y#+r1#,r1#*2,0
+            Circle x#-r2#,y#+r2#,r2#*2,0
+            Line x#,y#,x#+Cos(ang#)*r1#,y#+Sin(ang#)*r1#
+        Case 6 //Convex polygon
+            rotX# = Cos(ang#)
+            rotY# = Sin(ang#)
+            
+            count = PeekInt(geometry,1)-1
+            
+            px# = PeekFloat(geometry,5)+offsetX
+            py# = PeekFloat(geometry,9)+offsetY
+            x# = px#*rotX# - py#*rotY#
+            y# = px#*rotY# + py#*rotX#
+            firstX# = bx# + x#
+            firstY# = by# + y#
+            lastX# = firstX#
+            lastY# = firstY#
+            For i = 1 To count
+                px# = PeekFloat(geometry,5+i*8)+offsetX
+                py# = PeekFloat(geometry,9+i*8)+offsetY
+                x# = px#*rotX# - py#*rotY#
+                y# = px#*rotY# + py#*rotX#
+                px# = x# + bx#
+                py# = y# + by#
+                Line lastX,lastY,px,py
+                lastX# = px#
+                lastY# = py#
+            Next i
+            Line firstX#,firstY#,lastX#,lastY#
+        Case 7 //Segment
+            h# = PeekFloat(geometry,17)
+            x# = PeekFloat(geometry,1)+offsetX#
+            y# = PeekFloat(geometry,5)+offsetY#
+            x# = x#*rotX# - y#*rotY# + bx#
+            y# = y#*rotX# + x#*rotY# +by#
+            x2# = PeekFloat(geometry,9)+offsetX#
+            y2# = PeekFloat(geometry,13)+offsetY#
+            x2# = x2#*rotX# - y2#*rotY# + bx#
+            y2# = y2#*rotX# + x2#*rotY# + by#
+            ang# = GetAngle(x#,-y#,x2#,-y2#)
+            cpBox2(x+(x2-x)*0.5,y+(y2-y)*0.5,Distance(x,y,x2,y2),h*2,ang)
+            Circle x#-h#, y#+h#,h#*2.0,0
+            Circle x2#-h#,y2#+h#,h#*2.0,0 
+    EndSelect
+EndFunction
+
+Function cpDrawSegmentGeometry(geometry,bx# = 0,by# = 0,offsetX# = 0,offsetY# = 0,ang# = 0)
+    h# = PeekFloat(geometry,17)
+    x# = PeekFloat(geometry,1)+offsetX#
+    y# = PeekFloat(geometry,5)+offsetY#
+    x# = x#*rotX# - y#*rotY# + bx#
+    y# = y#*rotX# + x#*rotY# +by#
+    x2# = PeekFloat(geometry,9)+offsetX#
+    y2# = PeekFloat(geometry,13)+offsetY#
+    x2# = x2#*rotX# - y2#*rotY# + bx#
+    y2# = y2#*rotX# + x2#*rotY# + by#
+    ang# = GetAngle(x#,-y#,x2#,-y2#)
+    cpBox2(x+(x2-x)*0.5,y+(y2-y)*0.5,Distance(x,y,x2,y2),h*2,ang)
+    Circle x#-h#, y#+h#,h#*2.0,0
+    Circle x2#-h#,y2#+h#,h#*2.0,0 
+EndFunction
+
+Function cpIsBodySleeping(body)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(body,CP_INDEX_BODY_DLL_INDEX)
+    CallDLL CP_DLL_PATH,"isbodysleeping",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    Return PeekInt(CP_IN_MEMBLOCK,0)
+EndFunction
+
+Function cpDrawBoxGeometry(geometry,bx# = 0,by# = 0,ang# = 0,offsetX# = 0,offsetY# = 0)
+    rotX# = Cos(ang#)
+    rotY# = Sin(ang#)
+    px# = offsetX#*rotX# - offsetY#*rotY#
+    py# = offsetX#*rotY# + offsetY#*rotX#
+    cpBox2(bx# + px#,by# + py#,PeekFloat(geometry,1),PeekFloat(geometry,5),ang#)
+EndFunction
+
+Function cpBox2(x#,y#,w#,h#,ang#)
+    p1x# = x#+Cos(ang#)*w*0.5+Cos(ang#+90)*h*0.5
+    p1y# = y#+Sin(ang#)*w*0.5+Sin(ang#+90)*h*0.5
+    
+    p2x# = p1x-Cos(ang#)*w
+    p2y# = p1y-Sin(ang#)*w
+    
+    p3x# = p2x+Cos(ang#+270)*h
+    p3y# = p2y+Sin(ang#+270)*h
+    
+    p4x# = p3x+Cos(ang#)*w
+    p4y# = p3y+Sin(ang#)*w
+    
+    Line p1x,p1y,p2x,p2y
+    Line p2x,p2y,p3x,p3y
+    Line p3x,p3y,p4x,p4y
+    Line p4x,p4y,p1x,p1y
+EndFunction
+
+
+Function cpShapeUnderSegment(shape,x1#,y1#,x2#,y2#)
+    MemCopy shape,CP_INDEX_SHAPE_DLL,CP_OUT_MEMBLOCK,0,4 //Osoite...
+    PokeFloat CP_OUT_MEMBLOCK,4,x1
+    PokeFloat CP_OUT_MEMBLOCK,8,y1
+    PokeFloat CP_OUT_MEMBLOCK,12,x2
+    PokeFloat CP_OUT_MEMBLOCK,16,y2
+    CallDLL CP_DLL_PATH,"shapeundersegment",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    CP_GLOBAL_DISTANCE = PeekFloat(CP_IN_MEMBLOCK,1)
+    CP_GLOBAL_NORMAL_X = PeekFloat(CP_IN_MEMBLOCK,5)
+    CP_GLOBAL_NORMAL_Y = PeekFloat(CP_IN_MEMBLOCK,9)
+    Return PeekByte(CP_IN_MEMBLOCK,0)
+EndFunction
+
+
+Function cpDebugDraw(shapes = 1,collisionpoints = 0)
+    DrawToWorld ON
+    If shapes Then
+        Color CP_DEBUG_DRAW_SHAPE_COLOR_R,CP_DEBUG_DRAW_SHAPE_COLOR_G,CP_DEBUG_DRAW_SHAPE_COLOR_B
+        For s.CP_SHAPE_TYPE = Each CP_SHAPE_TYPE
+            shape = s\shape
+            geometry = PeekInt(shape,CP_INDEX_SHAPE_GEOMETRY)
+            If geometry <> 0 Then
+                body = PeekInt(shape,CP_INDEX_SHAPE_OWNER)
+                If body = CP_MAIN_STATIC_BODY Then
+                    cpDrawGeometry(geometry,0,0,PeekFloat(shape,CP_INDEX_SHAPE_OFFSET_X),PeekFloat(shape,CP_INDEX_SHAPE_OFFSET_Y),0)
+                Else
+                    cpDrawGeometry(geometry,PeekFloat(body,CP_INDEX_BODY_POS_X),PeekFloat(body,CP_INDEX_BODY_POS_Y),PeekFloat(shape,CP_INDEX_SHAPE_OFFSET_X),PeekFloat(shape,CP_INDEX_SHAPE_OFFSET_Y),PeekFloat(body,CP_INDEX_BODY_ANGLE))
+                EndIf
+            EndIf
+        Next s
+    EndIf
+    If collisionpoints Then
+        Color CP_DEBUG_DRAW_COLLISION_POINT_COLOR_R,CP_DEBUG_DRAW_COLLISION_POINT_COLOR_G,CP_DEBUG_DRAW_COLLISION_POINT_COLOR_B
+        For b.CP_BODY_TYPE = Each CP_BODY_TYPE
+            body = b\body
+            arbiterList = cpBodyGetArbiters(body)
+            If arbiterList Then
+                arbiters = cpArbiterListSize(arbiterList)
+                For i = 0 To arbiters-1
+                    arbiter = cpArbiterListGet(arbiterList,i)
+                    collisionpoints = cpArbiterCountCollisionPoints(arbiter)
+                    For i2 = 1 To collisionpoints
+                        Box cpArbiterGetCollisionPointX(arbiter,i2-1)-2,cpArbiterGetCollisionPointY(arbiter,i2-1)-2,4,4,0
+                    Next i2
+                    
+                Next i
+                cpDeleteArbiterList(arbiterList)
+            EndIf
+        Next b
+    EndIf
+EndFunction
+
+//cpSegmentQueryResult
+
+Function cpQueryCountHits(query)
+    Return MEMBlockSize(query) / 16
+EndFunction
+
+Function cpQueryGetShape(query,i)
+    Return PeekInt(query,i*16)
+EndFunction
+
+Function cpQueryGetDistance(query,i)
+    Return PeekFloat(query,i*16+4)
+EndFunction
+
+Function cpQueryGetNormalX(query,i)
+    Return PeekFloat(query,i*16+8)
+EndFunction
+
+Function cpQueryGetNormalY(query,i)
+    Return PeekFloat(query,i*16+12)
+EndFunction
+
+Function cpExplosion(x#,y#,power#)
+    PokeFloat CP_OUT_MEMBLOCK,0,power
+    PokeFloat CP_OUT_MEMBLOCK,4,x#
+    PokeFloat CP_OUT_MEMBLOCK,8,y#
+    CallDLL CP_DLL_PATH,"explosion",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpSegmentQuery(x1#,y1#,x2#,y2#,layers = -1,group = 0)
+    PokeFloat CP_OUT_MEMBLOCK,0,x1
+    PokeFloat CP_OUT_MEMBLOCK,4,y1
+    PokeFloat CP_OUT_MEMBLOCK,8,x2
+    PokeFloat CP_OUT_MEMBLOCK,12,y2
+    PokeInt CP_OUT_MEMBLOCK,16,layers
+    PokeInt CP_OUT_MEMBLOCK,20,group
+    CallDLL CP_DLL_PATH,"segmentquery",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    shapeCount = PeekInt(CP_IN_MEMBLOCK,0)
+    If shapeCount = 0 Then Return 0
+    ret = MakeMEMBlock(shapeCount * 16)
+    MemCopy CP_IN_MEMBLOCK,4,ret,0,shapeCount * 16
+    Return ret
+EndFunction
+
+Function cpSegmentQueryFirst(x1,y1,x2,y2,layers = -1,group = 0)
+    PokeFloat CP_OUT_MEMBLOCK,0,x1
+    PokeFloat CP_OUT_MEMBLOCK,4,y1
+    PokeFloat CP_OUT_MEMBLOCK,8,x2
+    PokeFloat CP_OUT_MEMBLOCK,12,y2
+    PokeInt CP_OUT_MEMBLOCK,16,layers
+    PokeInt CP_OUT_MEMBLOCK,20,group
+    CallDLL CP_DLL_PATH,"segmentqueryfirst",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    shape = PeekInt(CP_IN_MEMBLOCK,0)
+    If shape = 0 Then Return 0
+    CP_GLOBAL_DISTANCE = PeekFloat(CP_IN_MEMBLOCK,4)
+    CP_GLOBAL_NORMAL_X = PeekFloat(CP_IN_MEMBLOCK,8)
+    CP_GLOBAL_NORMAL_Y = PeekFloat(CP_IN_MEMBLOCK,12)
+    Return shape
+EndFunction
+
+Function cpSetSleepTimeThreshold(t#)
+    PokeFloat CP_OUT_MEMBLOCK,0,t#
+    CallDLL CP_DLL_PATH,"setsleeptimethreshold",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpSetIdleSpeedThreshold(t#)
+    PokeFloat CP_OUT_MEMBLOCK,0,t#
+    CallDLL CP_DLL_PATH,"setidlespeedthreshold",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpUseSpatialHash(width#,size)
+    PokeFloat CP_OUT_MEMBLOCK,0,width
+    PokeInt CP_OUT_MEMBLOCK,4,size
+    CallDLL CP_DLL_PATH,"usespatialhash",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpSetDamping(v#)
+    PokeFloat CP_OUT_MEMBLOCK,0,v#
+    CallDLL CP_DLL_PATH,"setdamping",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpReindexShape(shape)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(shape,CP_INDEX_SHAPE_DLL_INDEX)
+    CallDLL CP_DLL_PATH,"reindexshape",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpReindexBody(body)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(body,CP_INDEX_BODY_DLL_INDEX)
+    CallDLL CP_DLL_PATH,"reindexbody",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpReindexSpace()
+    CallDLL CP_DLL_PATH,"reindexspace"
+EndFunction
+
+Function cpConstraintGetImpulse(constraint)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(constraint,CP_INDEX_CONSTRAINT_DLL_INDEX)
+    CallDLL CP_DLL_PATH,"getimpulse",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    Return PeekFloat(CP_IN_MEMBLOCK,0)
+EndFunction
+
+
+Function cpConstraintGetMaxForce(constraint)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(constraint,CP_INDEX_CONSTRAINT_DLL_INDEX)
+    CallDLL CP_DLL_PATH,"getmaxforce",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    Return PeekFloat(CP_IN_MEMBLOCK,0)
+EndFunction
+
+Function cpConstraintGetMaxBias(constraint)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(constraint,CP_INDEX_CONSTRAINT_DLL_INDEX)
+    CallDLL CP_DLL_PATH,"getmaxbias",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    Return PeekFloat(CP_IN_MEMBLOCK,0)
+EndFunction
+
+Function cpConstraintGetErrorBias(constraint)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(constraint,CP_INDEX_CONSTRAINT_DLL_INDEX)
+    CallDLL CP_DLL_PATH,"geterrorbias",CP_OUT_MEMBLOCK,CP_IN_MEMBLOCK
+    Return PeekFloat(CP_IN_MEMBLOCK,0)
+EndFunction
+
+Function cpConstraintSetMaxForce(constraint,force#)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(constraint,CP_INDEX_CONSTRAINT_DLL_INDEX)
+    PokeFloat CP_OUT_MEMBLOCK,4,force#
+    CallDLL CP_DLL_PATH,"setmaxforce",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpConstraintSetMaxBias(constraint,bias#)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(constraint,CP_INDEX_CONSTRAINT_DLL_INDEX)
+    PokeFloat CP_OUT_MEMBLOCK,4,bias#
+    CallDLL CP_DLL_PATH,"setmaxbias",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpConstraintSetErrorBias(constraint,bias#)
+    PokeInt CP_OUT_MEMBLOCK,0,PeekInt(constraint,CP_INDEX_CONSTRAINT_DLL_INDEX)
+    PokeFloat CP_OUT_MEMBLOCK,4,bias#
+    CallDLL CP_DLL_PATH,"seterrorbias",CP_OUT_MEMBLOCK
+EndFunction
+

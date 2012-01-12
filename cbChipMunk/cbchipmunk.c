@@ -95,7 +95,7 @@ void initDll(void)
 	cpSpaceInit(&mSpace);
 	cpSpaceSetIterations(&mSpace,20);
 	cpSpaceSetEnableContactGraph(&mSpace,cpFalse);
-	cpSpaceSetSleepTimeThreshold(&mSpace,0.1f);
+	//cpSpaceSetSleepTimeThreshold(&mSpace,0.1f);
 	vhInit(&mVariableHandler);
 	mainStatic = vhAddBody(&mVariableHandler,cpSpaceGetStaticBody(&mSpace));
 	mainStatic->mCBPtr = 0;
@@ -602,6 +602,16 @@ __declspec( dllexport ) void setenablecontactgraph( const void * _in, int in_siz
 	cpSpaceSetEnableContactGraph(&mSpace,PEEKINT(INPUT_MEMBLOCK,0));
 }
 
+__declspec( dllexport ) void setcollisionbias( const void * _in, int in_size, void * _out, int out_sz )
+{
+	cpSpaceSetCollisionBias(&mSpace,PEEKFLOAT(INPUT_MEMBLOCK,0));
+}
+
+__declspec( dllexport ) void setcollisionpersistence( const void * _in, int in_size, void * _out, int out_sz )
+{
+	cpSpaceSetCollisionPersistence(&mSpace,PEEKFLOAT(INPUT_MEMBLOCK,0));
+}
+
 
 //Tällä resetoidaan runkoihin kohdistuvat voimat
 void resetBodyForces(cpBody *body, void *data)
@@ -643,7 +653,7 @@ DWORD WINAPI updateThread( LPVOID lpParam )
 		startTick = clock();
 		cpSpaceStep(&mSpace,mTimeStep);
 		spendTime = clock() - startTick;
-		mUpdateTime = (float)spendTime/CLOCKS_PER_SEC*1000.0f;
+		mUpdateTime = (float)spendTime/CLOCKS_PER_SEC*1000.0;
 	}
 	else
 	{
@@ -651,7 +661,7 @@ DWORD WINAPI updateThread( LPVOID lpParam )
 		cpSpaceStep(&mSpace,mTimeStep);
 		QueryPerformanceCounter(&end_ticks);
 		cputime.QuadPart = end_ticks.QuadPart- start_ticks.QuadPart;
-		mUpdateTime = (float)cputime.QuadPart/(float)ticksPerSecond.QuadPart*1000.0f;
+		mUpdateTime = (double)cputime.QuadPart/(double)ticksPerSecond.QuadPart*1000.0;
 	}
 
 	//Nollataan voimat

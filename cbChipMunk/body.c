@@ -24,7 +24,8 @@ __declspec( dllexport ) void bodynew( const void * _in, int in_size, void * _out
 	POKEVECT(OUTPUT_MEMBLOCK,8,cpBodyGetPos(body));
 	POKEFLOAT(OUTPUT_MEMBLOCK,16,radToDeg(cpBodyGetAngVel(body)));
 	POKEVECT(OUTPUT_MEMBLOCK,20,cpBodyGetVel(body));
-	
+	POKEFLOAT(OUTPUT_MEMBLOCK,28,cpBodyGetMass(body));
+	POKEFLOAT(OUTPUT_MEMBLOCK,32,cpBodyGetMoment(body));
 	
 	//Lisätään runko fysiikkamaailmaan, että se päivitettäisiin.
 	cpSpaceAddBody(&mSpace,body);
@@ -118,6 +119,7 @@ __declspec( dllexport ) void getarbiters( const void * _in, int in_size, void * 
 	cpContactPointSet pointset;
 	int i;
 	int i2;
+	cpVect tImpulse;
 	
 
 	//Haetaan runko jonka törmäyksiä tutkitaan.
@@ -143,30 +145,31 @@ __declspec( dllexport ) void getarbiters( const void * _in, int in_size, void * 
 		cpArbiterGetBodies(arbiter,&body1,&body2);
 		cpArbiterGetShapes(arbiter,&shape1,&shape2);
 
+		//Haetaan törmäyspisteet
+		pointset = cpArbiterGetContactPointSet(arbiter);
+		//Kirjoitetaan törmäysten määrä muistipalaan.
+		POKEINT(OUTPUT_MEMBLOCK,index,pointset.count);
 		if (body == body1)
 		{
-			POKEINT(OUTPUT_MEMBLOCK,index,((Variable*)body2->data)->mCBPtr);
-			POKEINT(OUTPUT_MEMBLOCK,index+4,((Variable*)shape1->data)->mCBPtr);
-			POKEINT(OUTPUT_MEMBLOCK,index+8,((Variable*)shape2->data)->mCBPtr);
+			POKEINT(OUTPUT_MEMBLOCK,index+4,((Variable*)body2->data)->mCBPtr);
+			POKEINT(OUTPUT_MEMBLOCK,index+8,((Variable*)shape1->data)->mCBPtr);
+			POKEINT(OUTPUT_MEMBLOCK,index+12,((Variable*)shape2->data)->mCBPtr);
 		}
 		else //Tämä tuskin koskaan toteutuu, mutta asia pitäisi varmistaa
 		{
-			POKEINT(OUTPUT_MEMBLOCK,index,((Variable*)body1->data)->mCBPtr);
-			POKEINT(OUTPUT_MEMBLOCK,index+4,((Variable*)shape2->data)->mCBPtr);
-			POKEINT(OUTPUT_MEMBLOCK,index+8,((Variable*)shape1->data)->mCBPtr);
+			POKEINT(OUTPUT_MEMBLOCK,index+4,((Variable*)body1->data)->mCBPtr);
+			POKEINT(OUTPUT_MEMBLOCK,index+8,((Variable*)shape2->data)->mCBPtr);
+			POKEINT(OUTPUT_MEMBLOCK,index+12,((Variable*)shape1->data)->mCBPtr);
 		}
+		POKEVECT(OUTPUT_MEMBLOCK,index+16,cpArbiterTotalImpulse(arbiter));
 
+		POKEVECT(OUTPUT_MEMBLOCK,index+24,cpArbiterTotalImpulseWithFriction(arbiter));
 
-		//Haetaan törmäyspisteet
-		pointset = cpArbiterGetContactPointSet(arbiter);
-
-		//Kirjoitetaan törmäysten määrä muistipalaan.
-		POKEINT(OUTPUT_MEMBLOCK,index+12,pointset.count);
-
-		index +=16;
+		index +=32;
 		for (i2 = 0; i2 < pointset.count;i2++)
 		{
 			POKEVECT(OUTPUT_MEMBLOCK,index,pointset.points[i2].point);
+			
 			index += 8;
 		}
 	}
@@ -181,6 +184,22 @@ __declspec( dllexport ) void applytorque( const void * _in, int in_size, void * 
 	cpBodySetTorque(body,cpBodyGetTorque(body)-PEEKFLOAT(INPUT_MEMBLOCK,4));
 }
 
+__declspec( dllexport ) void reindexshape( const void * _in, int in_size, void * _out, int out_sz )
+{
+	cpShape *body = (cpShape*)vhGetVariable(&mVariableHandler,PEEKINT(INPUT_MEMBLOCK,0))->mPtr;
+	cpSpaceReindexShape(&mSpace,body);
+}
+
+__declspec( dllexport ) void reindexbody( const void * _in, int in_size, void * _out, int out_sz )
+{
+	cpBody *body = (cpBody*)vhGetVariable(&mVariableHandler,PEEKINT(INPUT_MEMBLOCK,0))->mPtr;
+	cpSpaceReindexShapesForBody(&mSpace,body);
+}
+
+__declspec( dllexport ) void reindexspace( const void * _in, int in_size, void * _out, int out_sz )
+{
+	cpSpaceReindexStatic(&mSpace);
+}
 
 
 /*

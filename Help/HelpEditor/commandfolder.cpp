@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QStringList>
 #include <QDir>
+#include <qalgorithms.h>
 
 CommandFolder::CommandFolder(const QString &name, QTreeWidgetItem *item)
 {
@@ -98,10 +99,43 @@ void CommandFolder::save(QDataStream &stream)
     }
 }
 
+bool commandFolderLessThan(const CommandFolder *c1,const CommandFolder *c2)
+{
+    return c1->name().toLower() < c2->name().toLower();
+}
+
+bool commandHelpLessThan(const CommandHelp *c1,const CommandHelp *c2)
+{
+    return c1->name().toLower() < c2->name().toLower();
+}
+
 
 bool CommandFolder::generateFiles(QString destination, QString folderBase, QString functionBase)
 {
-    QString ownFBase = folderBase.replace(QString("$$FOLDERNAME$$"),mName);
+    qSort(mFolders.begin(),mFolders.end(),&commandFolderLessThan);
+    qSort(mHelps.begin(),mHelps.end(),&commandHelpLessThan);
+
+    CommandFolder *cur = this->parent();
+    int stackDepth = 0;
+    QString rootReplaceStr;
+    while (cur)
+    {
+        rootReplaceStr += "../";
+        stackDepth++;
+        cur = cur->parent();
+    }
+    if (!rootReplaceStr.isEmpty())
+    {
+        rootReplaceStr.remove(rootReplaceStr.length()-4,4);
+    }
+    else
+    {
+        rootReplaceStr = ".";
+    }
+
+
+    QString ownFBase = folderBase;
+    ownFBase.replace(QString("$$FOLDERNAME$$"),mName).replace("$$ROOT$$",rootReplaceStr);;
     QDir dir(destination);
     if (!dir.mkpath(destination+"/"+mName))
     {
@@ -142,7 +176,7 @@ bool CommandFolder::generateFiles(QString destination, QString folderBase, QStri
     for (QList<CommandFolder*>::iterator i = mFolders.begin();i != mFolders.end();i++)
     {
         QString childFolderText = parts2.first();
-        out << childFolderText.replace("$$CHILDFOLDERNAME$$",(*i)->name()).replace("$$CHILDFOLDERPATH$$",destination+"/"+mName+"/"+(*i)->name()+"/index.html");
+        out << childFolderText.replace("$$CHILDFOLDERNAME$$",(*i)->name()).replace("$$CHILDFOLDERPATH$$",(*i)->name()+"/index.html");
     }
 
     QStringList parts3 = parts2.last().split("$$FUNCTIONBEGIN$$");
@@ -170,10 +204,11 @@ bool CommandFolder::generateFiles(QString destination, QString folderBase, QStri
         QMessageBox::critical(0,"",QString("Kansion sivupohjan syntaksi on viallinen. Ei $$FUNCTIONEND$$:ä"));
     }
 
+
     for (QList<CommandHelp*>::iterator i = mHelps.begin();i != mHelps.end();i++)
     {
         QString functionText = parts4.first();
-        out << functionText.replace("$$FUNCTIONPATH$$",destination+"/"+mName+"/"+(*i)->name()+".html").replace("$$FUNCTIONNAME$$",(*i)->name());
+        out << functionText.replace("$$FUNCTIONPATH$$",(*i)->name()+".html").replace("$$FUNCTIONNAME$$",(*i)->name());
     }
 
     for (QList<CommandHelp*>::iterator i = mHelps.begin();i != mHelps.end();i++)

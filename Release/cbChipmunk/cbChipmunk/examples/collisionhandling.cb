@@ -1,0 +1,203 @@
+Const CP_DLL_PATH = "../cbChipmunk.dll"
+Include "../cbChipmunk.cb"
+
+SCREEN 800,600
+
+//Auton osille täytyy laittaa oma ryhmä, että ne eivät törmäisi keskenään
+Const CAR_GROUP = 5
+
+FrameLimit 60
+
+//Asetettaan piirtokomennot piirrettäviksi maailmakoordinaatteihin.
+DrawToWorld ON
+
+//Asetetaan painovoima
+cpSetGravity(0,-100.0)
+
+//10 fysiikan päivitystä per cpUpdate
+cpSetIterations(10)
+cpSetSleepTimeThreshold(0.2)
+
+//Laitetaan törmäysten tallennus käyttöön, että törmäykset saadaan haettua
+//cpSetEnableContactGraph(True)
+
+
+//Runko
+carMass# = 3
+carGeometry = cpPolyGeometryNew(5) //Viisi pistettä polygoniin
+
+//Asetellaan pisteeet
+cpPolyGeometrySetVertex(carGeometry,0,-50,-20)
+cpPolyGeometrySetVertex(carGeometry,1,-35,5)
+cpPolyGeometrySetVertex(carGeometry,2,0,20)
+cpPolyGeometrySetVertex(carGeometry,3,35,10)
+cpPolyGeometrySetVertex(carGeometry,4,50,-20)
+
+//Keskitetään polygoni sen keskipisteeseen
+cpPolyGeometryReCenter(carGeometry)
+
+
+//Luodaan auton runko.
+carBody = cpBodyNew(carMass,cpMomentForGeometry(carGeometry,carMass),0,100)
+
+//Listätään auton runkoon törmäysmuoto
+carShape = cpShapeNew(carBody,carGeometry,-1,CAR_GROUP)
+
+
+//Renkaat
+wheelMass# = 1
+wheelGeometry = cpCircleGeometryNew(10,8) //säde 10 pikseliä ja kumin paksuus 2 pikseliä (tyhjään osan säde 8)
+wheelBody1 = cpBodyNew(wheelMass,cpMomentForGeometry(wheelGeometry,wheelMass),40,70)
+wheelBody2 = cpBodyNew(wheelMass,cpMomentForGeometry(wheelGeometry,wheelMass),-40,70)
+wheelShape1 = cpShapeNew(wheelBody1,wheelGeometry,-1,CAR_GROUP,0,0,1.0)
+wheelShape2 = cpShapeNew(wheelBody2,wheelGeometry,-1,CAR_GROUP,0,0,1.0)
+
+
+//hiiren runko
+mouseBody = cpBodyNewStatic()
+
+//Liitokset
+
+//Tämä pitää pyörän paikallaan
+cpGrooveJointNew(carBody,wheelBody1,40,-70,40,0,0,0)
+cpGrooveJointNew(carBody,wheelBody2,-40,-70,-40,0,0,0)
+
+//Tämä toimii jousena ja iskun vaimentimena
+cpDampedSpringNew(carBody,wheelBody1,50,300.0,80.0)
+cpDampedSpringNew(carBody,wheelBody2,50,300.0,80.0)
+
+//Tehdään kalteva taso
+lineGeometry = cpSegmentGeometryNew(400,-200,-100,-100,10)
+lineShape = cpShapeNewStatic(lineGeometry)
+
+//Tehdään reunat
+borderGeometry = cpBoxGeometryNew(800,600) //Ruudun koko
+cpBorderNew(borderGeometry,10) //Tehdään reunat
+
+spring = 0
+
+Repeat
+    //Tähän fysiikaan liittyvät muokkaukset
+    torque# = 0
+    If RightKey() Then
+        torque# = 8000
+    ElseIf LeftKey()
+        torque# = -8000
+    EndIf
+    
+    //Pyöritetään pyöriä
+    cpApplyTorque(wheelBody1,torque)
+    cpApplyTorque(wheelBody2,torque)
+    
+    If MouseHit(1) And spring = 0 Then
+        shape = cpShapeUnderPoint(MouseWX(),MouseWY())
+        If shape <> 0 Then 
+            body = PeekInt(shape,CP_INDEX_SHAPE_OWNER)
+            If body <> CP_MAIN_STATIC_BODY Then
+                cpBodyWorldToLocal(body,MouseWX(),MouseWY())
+                spring = cpPivotJointNew(mouseBody,body,0,0,CP_GLOBAL_X,CP_GLOBAL_Y)
+            EndIf
+        EndIf
+    EndIf
+    
+    shape = cpShapeUnderPoint(MouseWX(),MouseWY())
+    If shape Then
+        pickedBody = PeekInt(shape,CP_INDEX_SHAPE_OWNER)//Haetaan törmäysmuodosta sen omistava runko
+        Text 10,50,"Picked..."
+        If pickedBody <> CP_MAIN_STATIC_BODY Then //Tämä vaaditaan, koska pohja staattisella runkolla ei ole cb:n puolella muistipalaa...
+            If cpIsBodySleeping(pickedBody) Then Text 10,60,"Body is sleeping...  ZZZZZZZZZZZZZZZZZZZZZZ...."
+        EndIf
+    EndIf
+    
+    cpBodySetPos(mouseBody,MouseWX(),MouseWY())
+    cpPush(mouseBody)
+    If MouseUp(1) Then
+        If spring Then
+            cpDelete(spring)
+            spring = 0
+        EndIf
+    EndIf
+    
+    //Pompataan
+    If KeyHit(cbKeyUp) Then cpApplyImpulse(carBody,0,1000,0,0)
+    
+    If KeyHit(cbKeyZ) Then
+        
+        cpShapeSetFriction(wheelShape1,friction#-0.1)
+        cpPush(wheelShape1)
+        cpShapeSetFriction(wheelShape2,friction#-0.1)
+        cpPush(wheelShape2)
+    ElseIf KeyHit(cbKeyX) Then
+        
+        cpShapeSetFriction(wheelShape1,friction#+0.1)
+        cpPush(wheelShape1)
+        cpShapeSetFriction(wheelShape2,friction#+0.1)
+        cpPush(wheelShape2)
+    EndIf
+    
+    If KeyHit(cbKeyR) Then
+        cpBodyReset(carBody)
+        cpBodyReset(wheelBody1)
+        cpBodyReset(wheelBody2)
+        
+        cpBodySetPos(carBody,0,100) : cpPush(carBody)
+        cpBodySetPos(wheelBody1,40,70) : cpPush(wheelBody1)
+        cpBodySetPos(wheelBody2,-40,70) : cpPush(wheelBody2)
+    EndIf
+
+
+    //Tehdään lista kaikista törmäyksistä
+    arbiterList = cpBodyGetArbiters(carBody)
+    //Tarkistetaan löytyikö ainoatakaan törmäystä (cpBodyGetArbiters palauttaa 0 jos ei löytynyt...)
+    If arbiterList Then
+    
+        //Luetaan törmäyslistan koko
+        arbiters = cpArbiterListSize(arbiterList)
+        Color cbRed
+        
+        For i = 0 To arbiters-1
+        
+            //Haetaan törmäyslistasta yksi törmäys
+            arbiter = cpArbiterListGet(arbiterList,i)
+    
+            //Haetaan törmäyspisteiden määrä
+            collisionpoints = cpArbiterCountCollisionPoints(arbiter)
+    
+            For i2 = 1 To collisionpoints
+                //Piirretään punainen laatikko jokaisen törmäys pisteen kohdalle.
+                Box cpArbiterGetCollisionPointX(arbiter,i2-1)-2,cpArbiterGetCollisionPointY(arbiter,i2-1)-2,4,4,0
+            Next i2
+            
+        Next i
+        
+        //Tämä poistaa sekä listan, että kaikki sen jäsenet. Tämä on tärkeä. Ilman tätä ohjelmasi vie jatkuvasti enemmän tilaa.
+        cpDeleteArbiterList(arbiterList)
+    EndIf
+
+    Color cbWhite
+
+    
+    cpUpdate(1.0/60.0) //Aloitetaan fysiikan päivitys. Päivitetään fysiikoita 1/60 sekuntia
+    //Tämän jälkeen ei muokkauksia fysiikkaan
+    
+    //Kaikki törmäysmuodot
+    cpDebugDraw()
+    
+    
+    //Piirretään vähän tietoja
+    Text 10,10,"FPS:"+FPS()
+    Text 10,20,"Car pos: ("+PeekFloat(carBody,CP_INDEX_BODY_POS_X)+","+PeekFloat(carBody,CP_INDEX_BODY_POS_Y) + ") Angle:"+PeekFloat(carBody,CP_INDEX_BODY_ANGLE)
+    Text 10,30,"Updating physics took "+updateTime#+"ms"
+    friction# = cpShapeGetFriction(wheelShape1)
+    Text 10,40,"Friction (z/x): "+friction#
+    
+    DrawScreen
+    
+    updateTime# = cpWaitForUpdate()//Odotetaan fysiikan päivittymistä...
+    
+    
+    cpPullAll() //Päivitetään sijainnit
+Forever
+
+
+

@@ -314,18 +314,25 @@ bool MainWindow::saveTo(const QString &path)
 void MainWindow::removeCommandFolder(CommandFolder *folder)
 {
     selectCommandHelp(0);
-    mCommandHelps.remove(folder->item());
+    mCommandFolders.remove(folder->item());
     folder->removeAndDeleteAll(mCommandHelps,mCommandFolders);
+    if (folder->parent())
+    {
+        folder->parent()->mFolders.removeAll(folder);
+    }
     delete folder->item();
     delete folder;
+
 }
 
 void MainWindow::removeCommandHelp(CommandHelp *help)
 {
     selectCommandHelp(0);
     mCommandHelps.remove(help->item());
+    help->parent()->mHelps.removeAll(help);
     delete help->item();
     delete help;
+
 }
 
 void MainWindow::selectCommandHelp(CommandHelp *help)
@@ -425,6 +432,7 @@ void MainWindow::newHelp()
     //Ensimmäinen ohje
     QTreeWidgetItem *startHelp = new QTreeWidgetItem(folder);
     CommandHelp *chelp = new CommandHelp(startHelp);
+    chelp->setParent(cfolder);
     chelp->setName(tr("Funktio"));
     mCommandHelps[startHelp] = chelp;
     ui->nameLineEdit->setText(chelp->name());
@@ -432,6 +440,8 @@ void MainWindow::newHelp()
     setTitle("unsaved");
     setModified(true);
     folder->setExpanded(true);
+
+
 }
 
 void MainWindow::clearAll()
@@ -472,6 +482,7 @@ void MainWindow::addNewHelp(QTreeWidgetItem *parent)
     parent->setExpanded(true);
     mCommandFolders[parent]->mHelps.append(help);
     help->setParent(mCommandFolders[parent]);
+
 }
 
 void MainWindow::addNewFolder(QTreeWidgetItem *parent)
@@ -484,6 +495,7 @@ void MainWindow::addNewFolder(QTreeWidgetItem *parent)
     parent->setExpanded(true);
     mCommandFolders[parent]->mFolders.append(folder);
     folder->setParent(mCommandFolders[parent]);
+
 }
 
 void MainWindow::generate()

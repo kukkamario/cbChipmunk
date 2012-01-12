@@ -1,0 +1,182 @@
+Const CP_DLL_PATH = "../cbChipmunk.dll"
+Include "../cbChipmunk.cb"
+
+Type Enemies
+    Field obj
+    Field body
+    Field shape
+    Field health#
+EndType
+
+
+
+
+Type MapTiles
+    Field shape
+EndType
+
+Const CB_FOLDER = "..\.."
+
+Const ENEMY_MASS = 50
+Const ENEMY_INERTIA = 50
+Const TILE_SIZE_X = 32
+Const TILE_SIZE_Y = 32
+Const MAX_RAY_DIST = 500
+
+Global master_enemy,enemy_geometry,tile_geometry,map
+
+enemy_geometry = cpCircleGeometryNew(22)
+
+tile_geometry = cpBoxGeometryNew(TILE_SIZE_X,TILE_SIZE_Y)
+
+map= LoadMap(CB_FOLDER+"\Media\cdm2.til",CB_FOLDER+"\Media\tileset.bmp")
+Dim MapArray(MapWidth(),MapHeight())
+InitPhysicsMap()
+
+master_enemy = LoadObject(CB_FOLDER+"\Media\ukkeli2.bmp",72)
+ShowObject master_enemy,OFF
+
+
+player_obj = LoadObject(CB_FOLDER+"\Media\soldier.bmp",72)
+player_body = cpBodyNew(ENEMY_MASS,ENEMY_INERTIA)//samat kuin vihollisilla...
+player_shape = cpShapeNew(player_body,enemy_geometry)
+
+
+cpSetDamping(0.1) //Paljon hidastuvuutta, että eivät mene minne sattuu...
+FrameLimit 60
+
+DrawToWorld ON 
+
+Repeat
+    fx# = 0
+    fy# = 0
+    If UpKey() Then
+        fy# = 10000
+    ElseIf DownKey()
+        fy# = -10000
+    EndIf
+    If LeftKey() Then
+        fx# = -10000
+    Elseif RightKey()
+        fx# = 10000
+    EndIf
+    If fx# <> 0 Or fy <> 0 Then cpApplyForce(player_body,fx#,fy#,0,0)
+    
+    RotateObject player_obj,GetAngle(ObjectX(player_obj),-ObjectY(player_obj),MouseWX(),-MouseWY())
+
+    DrawGame
+    
+    If MouseHit(2) Then
+        MakeEnemy(MouseWX(),MouseWY())
+    EndIf
+    
+    If MouseDown(1) Then
+    
+        lastX# = ObjectX(player_obj)
+        lastY# = ObjectY(player_obj)
+        
+        angleVectorX# = MouseWX()-lastX# //Laserin suuntainen vektori
+        angleVectorY# = MouseWY()-lastY#
+        
+        dist# = Distance(0,0,angleVectorX,angleVectorY)
+        If dist# = 0 Then Goto skip
+        angleVectorX# = angleVectorX#/dist# //Normaloidaan...
+        angleVectorY# = angleVectorY#/dist#
+        
+        
+        totaldist# = 0
+        While totaldist < MAX_RAY_DIST
+        
+            dist# = MAX_RAY_DIST-totaldist
+            rx# = lastX#+angleVectorX#*dist
+            ry# = lastY#+angleVectorY#*dist
+            shape = cpSegmentQueryFirst(lastX#,lastY#,rx#,ry#)
+            
+            
+            If shape = 0 Then
+                Color cbRed
+                Line LastX#,LastY#,LastX#+angleVectorX*dist#,LastY# + angleVectorY*dist#
+                Exit
+            EndIf
+            hitx# = lastX#+angleVectorX#*CP_GLOBAL_DISTANCE*dist#
+            hity# = lastY#+angleVectorY#*CP_GLOBAL_DISTANCE*dist#
+            totalDist# = totalDist# + CP_GLOBAL_DISTANCE*dist#+3
+            
+            iterator = PeekInt(shape,CP_INDEX_SHAPE_USERDATA)
+            If iterator Then
+                enemy.enemies = ConvertToType(iterator)
+                enemy\health = enemy\health - 1
+                cpBodyWorldToLocal(enemy\body,hitx,hity)
+                force = 1000
+                cpApplyForce(enemy\body,angleVectorX#*force,angleVectorY*force,CP_GLOBAL_X,CP_GLOBAL_Y)
+                
+                If enemy\health < 0 Then
+                    cpDelete(enemy\body)
+                    DeleteObject enemy\obj
+                    Delete enemy
+                EndIf
+                
+            EndIf
+            
+            
+            Color cbRed
+            Line lastX#,lastY#,hitX#,hitY#
+            //Color cbGreen
+            //Line hitX#,hitY#,hitX#+CP_GLOBAL_NORMAL_X*40,hitY# + CP_GLOBAL_NORMAL_Y*40
+            
+            //new_vector=old_vector-wall_normal*wall_normal.dot( old_vector )*2;
+            dotProduct# = (CP_GLOBAL_NORMAL_X*angleVectorX) + (CP_GLOBAL_NORMAL_Y*angleVectorY)
+            angleVectorX = angleVectorX - CP_GLOBAL_NORMAL_X*dotProduct#*2 //Lasketaan uuden heijastuneen laserin suunta
+            angleVectorY = angleVectorY - CP_GLOBAL_NORMAL_Y*dotProduct#*2
+            
+            lastX# = CP_GLOBAL_NORMAL_X+hitX//Pakko laittaa vähän väliä että toimii
+            lastY# = CP_GLOBAL_NORMAL_Y+hitY
+        Wend
+
+    EndIf
+    skip:
+    
+    Color cbGreen//Piirretään vihreä ympyrä pelaajan ympärille
+    Circle ObjectX(player_obj)-22,ObjectY(player_obj)+22,44,0
+    
+    
+    cpUpdate(1.0/60.0) //Päivitetään fysiikat
+    CloneCameraPosition player_obj //Siirretään  kamera pelaajan kohdalle
+    
+    DrawScreen
+    cpWaitForUpdate()//Odotetaan fysiikoiden päivittymistä
+    cpPullAll()//Haetaan muutokset
+    For enemy.enemies = Each enemies
+        PositionObject enemy\obj,PeekFloat(enemy\body,CP_INDEX_BODY_POS_X),PeekFloat(enemy\body,CP_INDEX_BODY_POS_Y)
+        RotateObject enemy\obj,PeekFloat(enemy\body,CP_INDEX_BODY_ANGLE)
+    Next enemy
+    PositionObject player_obj,PeekFloat(player_body,CP_INDEX_BODY_POS_X),PeekFloat(player_body,CP_INDEX_BODY_POS_Y)
+    
+Forever
+
+
+
+Function MakeEnemy(x,y)
+    enemy.enemies = New(enemies)
+    enemy\obj = CloneObject(master_enemy)
+    enemy\body = cpBodyNew(ENEMY_MASS,ENEMY_INERTIA,x,y)
+    enemy\shape = cpShapeNew(enemy\body,enemy_geometry)
+    enemy\health# = 100.0
+    i = ConvertToInteger(enemy)
+    PokeInt enemy\shape,CP_INDEX_SHAPE_USERDATA,i //Laitetaan muodon ylijäämä dataaan tyyppiosoitin
+    Return i
+EndFunction
+
+
+Function InitPhysicsMap()
+    For y=1 To MapHeight()
+        For x=1 To MapWidth()
+            If GetMap2(2,x,y) Then
+                wx = -ObjectSizeX(map)/2+x*TILE_SIZE_X-TILE_SIZE_X/2
+                wy = ObjectSizeY(map)/2-y*TILE_SIZE_Y+TILE_SIZE_Y/2
+                MapArray(x,y) = cpShapeNewStatic(tile_geometry,-1,CP_NO_GROUP,wx,wy)
+            EndIf
+        Next x
+    Next y
+EndFunction
+

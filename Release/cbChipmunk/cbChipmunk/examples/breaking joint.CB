@@ -1,0 +1,115 @@
+Const CP_DLL_PATH = "../cbChipmunk.dll"
+Include "../cbChipmunk.cb"
+SCREEN 800,600
+
+Text 50,50,"Loading..."
+DrawScreen
+
+Const body_mass = 10.0
+
+FrameLimit 60
+
+//Tehdään laatikon kuva
+img = MakeImage(150,30)
+DrawToImage img
+Color cbRed
+Box 0,0,150,30
+Color cbBlack
+Text 5,0,"Hello cbChipmunk"
+DrawToScreen
+
+DrawToWorld ON
+
+
+
+//Tehdään objekti
+object = MakeObject(360) //Pyörityslaatu törkeän korkea, mutta näyttää tyhmältä muuten...
+PaintObject object,-img
+
+//Tehdään laatin geometrinen muoto
+boxGeom = cpBoxGeometryNew(150,30)
+//Tehdään laatikolle runko
+boxBody = cpBodyNew(body_mass,cpMomentForGeometry(boxGeom,body_mass))
+//Luodaan varsinainen törmäysmuoto runkoon kiinni.
+boxShape = cpShapeNew(boxBody,boxGeom)
+//Asetetaan painovoima
+cpSetGravity(0,-100.0)
+
+//50 törmäysten laskentaa per cpUpdate
+cpSetIterations(50)
+
+//Tehdään reunat
+borderGeometry = cpBoxGeometryNew(800,600) //Ruudun koko
+cpBorderNew(borderGeometry,10) //Tehdään reunat
+
+
+//Luodaan staattinen runko hiirelle
+mouseBody = cpBodyNewStatic()
+
+mouseJoint = 0
+
+grapBodyX = 0
+grapBodyY = 0
+
+
+Repeat
+    Color cbWhite
+    
+    //Odotetaan fysiikoiden päivittymistä ja kirjoitetaan päivitykseen käytetty aika
+    Text 10,10,cpWaitForUpdate() + "ms"
+    Text 10,20,mouseJoint
+    
+    //Haetaan laatikon sijainnin ja kulman muutokset
+    cpPullAll()
+    
+    //Asetetaan hiiren runko hiiren kohdalle
+    cpBodySetPos(mouseBody,MouseWX(),MouseWY())
+    //Siirretään muutos fysiikkamoottorille
+    cpPush(mouseBody)
+    
+    If MouseHit(1) Then
+        //Tarkistetaan onko jokin törmäysmuoto hiiren alla
+        shape = cpShapeUnderPoint(MouseWX(),MouseWY())
+        If shape Then //Jos on
+            body = PeekInt(shape,CP_INDEX_SHAPE_OWNER) //Haetaan törmäysmuodon runko
+            If body = boxBody Then
+                If mouseJoint Then cpDelete(mouseJoint) //Jos jostain oudosta syystä liitos olisikin olemassa, poistetaan se
+                cpBodyWorldToLocal(body,MouseWX(),MouseWY()) //Muunnetaan hiiren koordinaatit rungon koordinaateiksi
+                mouseJoint = cpPivotJointNew(mouseBody,body,0,0,CP_GLOBAL_X,CP_GLOBAL_Y)
+                grapBodyX = CP_GLOBAL_X
+                grapBodyY = CP_GLOBAL_Y
+            EndIf
+        EndIf
+    EndIf
+    
+    If MouseUp(1) Then
+        If mouseJoint Then
+            cpDelete(mouseJoint)
+            mouseJoint = 0
+        EndIf
+    EndIf
+    
+    If mouseJoint Then
+        impulse# = cpConstraintGetImpulse(mouseJoint)
+        Text 10,30,"Impulse:"+impulse
+        If impulse > 1000 Then
+            cpDelete(mouseJoint)
+            mouseJoint = 0
+        EndIf
+    EndIf
+    
+    cpUpdate(0.01666666666)//Päivitetään fysiikoita 1/60 sekuntti
+    
+    //Asetettaan laatikko-objekti rungolta saatuun paikkaan ja kulmaan
+    PositionObject object,cpBodyGetPosX(boxBody),cpBodyGetPosY(boxBody)
+    RotateObject  object,cpBodyGetAngle(boxBody)
+    
+    DrawGame
+    If mouseJoint Then
+        cpBodyLocalToWorld(boxBody,grapBodyX,grapBodyY)
+        Line MouseWX(),MouseWY(),CP_GLOBAL_X,CP_GLOBAL_Y
+    EndIf
+    //Piirretään näyttö
+    DrawScreen
+
+Forever

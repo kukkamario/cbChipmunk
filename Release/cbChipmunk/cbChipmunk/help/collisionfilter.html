@@ -1,0 +1,54 @@
+﻿<html>
+<head>
+<title>Törmäysten lajittelu</title>
+<style type="text/css">
+body
+{
+	color: #000000;
+	font: 10pt verdana;
+	background: #eeeeee;}
+a
+{
+  	color: #0000ff;
+	text-decoration: none;
+}
+a:hover
+{
+	color: #ffffff;
+	background: #0088ee;
+	text-decoration: none;
+}
+</style>
+</head>
+<body text="#000000" link="blue" alink="red" vlink="blue" bgcolor="#eeeeee">
+<font face="verdana,arial,helvetica,courier" size=2>
+
+<!--{START} -->
+
+<p><font color="#0000ff"><b>Törmäysten lajittelu</b></font></p>
+
+
+<p>cbChipmunkissa kahden törmäysmuodon(cpShape) mahdollisuus törmätä riippuu 
+3:sta asiasta:</p><ol><li>Muotojen täytyy olla samalla törmäyskerroksella.</li>
+<li>Muodot eivät saa olla samassa ryhmässä</li>
+<li>Muotojen täytyy olla päällekkäin</li>
+</ol>
+<p>
+Törmäyskerros on 32 bittiseen kokonaislukuun (Integer) tallennettu bittimaski. Oletuksena 
+törmäysmuoto on kaikilla kerroksilla eli kokonaisluvun kaikki bitit ovat 1. 
+Mikäli haluat jonkin törmäysmuodon olevan vain jollain tietyillä kerroksilla 
+voit käyttää CP_LAYER_N vakioita, missä N on luku väliltä 1 - 32. Voit yhdistää 
+kerrokset binäärisen OR operaation avulla (cpBinOr) ja tarkistaa onko kahdessa 
+kerroksen bittimaskissa samoja kerroksia binäärisen AND operaation avulla 
+(cpBinAnd).</p>
+<p>
+Samaan ryhmään kuuluvat törmäysmuodoteivät voi törmätä keskenään. Ryhmän 
+tallennuksessa käytetään myöskin 32-bittistä kokonaislukua (Integer), joten 
+ainakaan ryhmien määrä ei rajoita.</p>
+<p>
+Voit tarkistaa, voivatko tietyt kerros ja ryhmä yhdistelmät törmätä keskenään, 
+<a href="$$ROOT$$/cancollide.html">cpCanCollide</a> funktion avulla.</p>
+
+</body>
+
+</html>

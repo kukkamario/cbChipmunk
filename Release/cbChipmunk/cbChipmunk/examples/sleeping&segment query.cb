@@ -1,0 +1,94 @@
+Const CP_DLL_PATH = "../cbChipmunk.dll"
+Include "../cbChipmunk.cb"
+
+Type Bodies
+    Field body
+    Field shape
+EndType
+
+Global body_geometry
+
+body_geometry = cpBoxGeometryNew(10,10)
+
+SCREEN 800,600
+
+
+FrameLimit 60
+DrawToWorld ON
+
+
+
+//Asetetaan painovoima
+cpSetGravity(0,-100.0)
+
+cpSetSleepTimeThreshold(0.1)
+
+//30 fysiikan p‰ivityst‰ per cpUpdate
+cpSetIterations(50)
+
+//Tehd‰‰n reunat
+borderGeometry = cpBoxGeometryNew(800,600) //Ruudun koko
+cpBorderNew(borderGeometry,10) //Tehd‰‰n reunat
+
+Repeat
+    Color cbWhite
+    Text 10,10,cpWaitForUpdate()
+    cpPullAll()
+    
+    If MouseHit(1) Then
+        newBody(MouseWX(),MouseWY())
+    ElseIf MouseHit(2)
+        deleteBody(MouseWX(),MouseWY())
+    EndIf
+    
+    Line 0,0,MouseWX(),MouseWY()
+    queryResult = cpSegmentQuery(0,0,MouseWX(),MouseWY())
+    If queryResult Then
+        Color cbRed
+        hits = cpQueryCountHits(queryResult)
+        lineDist# = Distance(0,0,MouseWX(),-MouseWY())
+        angle# = GetAngle(0,0,MouseWX(),-MouseWY())
+        For i = 0 To hits-1
+            dist# = cpQueryGetDistance(queryResult,i)*lineDist#
+            x# = Cos(angle#)*dist#
+            y# = Sin(angle#)*dist#
+            Circle x-4,y+4,8
+        Next i
+        DeleteMEMBlock queryResult
+    EndIf
+    
+    cpUpdate(0.01666666666)//P‰ivitet‰‰n fysiikoita 1/60 sekuntti
+    
+    For body.Bodies = Each Bodies //Piirret‰‰n laatikot
+        If cpIsBodySleeping(body\body) Then Color cbRed Else Color cbWhite
+        cpDrawBoxGeometry(body_geometry,PeekFloat(body\body,CP_INDEX_BODY_POS_X),PeekFloat(body\body,CP_INDEX_BODY_POS_Y),PeekFloat(body\body,CP_INDEX_BODY_ANGLE))
+    Next body    
+    
+    DrawScreen
+
+Forever
+
+
+
+
+
+Function newBody(x,y)
+    body.Bodies = New (Bodies)
+    body\body = cpBodyNew(300,300,x,y)
+    body\shape = cpShapeNew(body\body,body_geometry)
+EndFunction
+
+Function deleteBody(x,y)
+    shape = cpShapeUnderPoint(x,y)
+    If shape Then
+        pickedBody = PeekInt(shape,CP_INDEX_SHAPE_OWNER)
+        For body.Bodies = Each Bodies 
+            If body\body = pickedBody Then
+                //cpDelete(body\shape)
+                cpDelete(body\body)
+                Delete body
+                Return 0
+            EndIf
+        Next body
+    EndIf
+EndFunction

@@ -1,0 +1,83 @@
+Const CP_DLL_PATH = "../cbChipmunk.dll"
+Include "../cbChipmunk.cb"
+
+SCREEN 800,600
+
+Text 50,50,"Loading..."
+DrawScreen
+
+Const body_mass = 10.0
+
+FrameLimit 60
+
+//Tehd‰‰n laatikon kuva
+img = MakeImage(150,30)
+DrawToImage img
+Color cbRed
+Box 0,0,150,30
+Color cbBlack
+Text 5,0,"Hello cbChipmunk"
+DrawToScreen
+
+DrawToWorld ON
+
+
+//Tehd‰‰n objekti
+object = MakeObject(360) //Pyˆrityslaatu tˆrke‰n korkea, mutta n‰ytt‰‰ tyhm‰lt‰ muuten...
+PaintObject object,-img
+
+//Tehd‰‰n laatin geometrinen muoto
+boxGeom = cpBoxGeometryNew(150,30)
+//Tehd‰‰n laatikolle runko
+body = cpBodyNew(body_mass,cpMomentForGeometry(boxGeom,body_mass))
+//Luodaan varsinainen tˆrm‰ysmuoto runkoon kiinni.
+shape = cpShapeNew(body,boxGeom)
+//Asetetaan painovoima
+cpSetGravity(0,-100.0)
+
+//50 tˆrm‰ysten laskentaa per cpUpdate
+cpSetIterations(50)
+
+//Tehd‰‰n reunat
+borderGeometry = cpBoxGeometryNew(800,600) //Ruudun koko
+cpBorderNew(borderGeometry,10) //Tehd‰‰n reunat
+
+
+//Luodaan staattinen runko hiirelle
+mouseBody = cpBodyNewStatic()
+circleGeom = cpCircleGeometryNew(20)
+cpShapeNew(mouseBody,circleGeom)
+
+Repeat
+    Color cbWhite
+    
+    //Odotetaan fysiikoiden p‰ivittymist‰ ja kirjoitetaan p‰ivitykseen k‰ytetty aika
+    Text 10,10,cpWaitForUpdate() + "ms"
+    
+    //Haetaan laatikon sijainnin ja kulman muutokset
+    cpPullAll()
+    
+    //Asetetaan hiiren runko hiiren kohdalle
+    cpBodySetPos(mouseBody,MouseWX(),MouseWY())
+    
+    //Siirret‰‰n muutos fysiikkamoottorille
+    cpPush(mouseBody)
+    //Varmistetaan, ett‰ fysiikkamoottori on perill‰ sijainnin muutoksesta
+    cpReindexBody(mouseBody)
+    
+    //Piirret‰‰n hiiren ympyr‰
+    Circle MouseWX()-20,MouseWY()+20,40,0
+    
+    //Asetettaan laatikko-objekti rungolta saatuun paikkaan ja kulmaan
+    PositionObject object,cpBodyGetPosX(body),cpBodyGetPosY(body)
+    
+    RotateObject  object,cpBodyGetAngle(body)
+    
+    
+    
+    cpUpdate(0.01666666666)//P‰ivitet‰‰n fysiikoita 1/60 sekuntti
+     
+    //Piirret‰‰n n‰yttˆ
+    DrawScreen
+
+Forever

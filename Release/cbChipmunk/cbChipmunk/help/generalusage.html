@@ -1,0 +1,106 @@
+﻿<html>
+<head>
+<title>cbChipmunkin toiminta</title>
+<style type="text/css">
+body
+{
+	color: #000000;
+	font: 10pt verdana;
+	background: #eeeeee;}
+a
+{
+  	color: #0000ff;
+	text-decoration: none;
+}
+a:hover
+{
+	color: #ffffff;
+	background: #0088ee;
+	text-decoration: none;
+}
+</style>
+</head>
+<body text="#000000" link="blue" alink="red" vlink="blue" bgcolor="#eeeeee">
+<font face="verdana,arial,helvetica,courier" size=2>
+
+<!--{START} -->
+
+<p><font color="#0000ff"><b>Toiminta</b></font></p>
+
+
+<p>cbChipmunkin fysiikat perustuvat Chipmunk-Physics 2d-fysiikkakirjastoon. 
+Kirjastoa käytetään DLL:n avulla, ja fysiikoiden laskenta tapahtuu omassa 
+säikeessään. Eli mikäli käytössä on prosessori joka pystyy suorittamaan useampaa 
+säiettä yhtäaikaa, fysiikat lasketaan samaan aikaa, kun ohjelma suorittaa 
+jotakin muuta. Tämä mahdollistaa sen, että fysiikoiden laskeminen ei hidasta 
+peliä juuri lainkaan, ellei fysiikoiden päivitys vie enemmän aikaa kuin 
+Coolbasicin puolella pyörivä koodi cpUpdaten ja cpWaitForUpdaten välissä.</p>
+<p>cbChipmunkin tieto on yhtä aikaa kahdessa paikassa: Coolbasic puolella 
+muistipaloissa ja DLL:n puolella Chipmunk-Physicsin käytössä. Tieto siirretään 
+näiden kahden paikan välillä pääasiassa cpPull, cpPullAll ja cpPush komentojen 
+avulla. cpPull funktio hakee rungon fysiikoiden laskemisessa muuttuvat tiedot 
+(sijainti, kulma, nopeudet) takaisin Coolbasicin puolelle. cpPullAll toimii 
+samoinkuin cpPull, mutta hakee kaikkien runkojen tiedot. cpPush "tyrkkää" tiedot 
+takaisin DLL:lle muutosten jälkeen. cbChipmunkin kaikki "oliot" ovat 
+muistipaloja ja suurimpaa osaa niiden tiedoista voi muokata Coolbasicin Poke*** 
+komentojen avulla, mutta muutokset pitää siirtää cpPushin avulla DLL:lle, koska 
+muuten rungoille tehdyt muutokset kumoutuvat heti seuraavassa cpPullAllissa tai 
+cpPullissa. Törmäysmuotojen muistipaloihin tehdyt muutokset eivät kumoudu, mutta 
+ne eivät vaikuta ennen kuin ne siirretään DLL:n puolelle cpPushin avulla.
+</p>
+<p>Liitokset (cpConstraint) tekevät cpPushin käytössä poikkeuksen verrattuna 
+runkoihin ja törmäysmuotoihin. Niiden muistipaloja ei kannata/saa muuttaa, 
+lukuun ottamatta käyttäjän dataa varten tarkoitettua 4 tavua. cpConstraintSet*** 
+funktiot muuttavat suoraan DLL:llä olevaa tietoa. Tähän saattaa tulla muutos 
+tulevaisuudessa.</p>
+<p>&nbsp;</p>
+<p>Kaksoisbufferoinnista ja säikeistyksestä johtuen pelin pääsilmukka kannattaa 
+olla rankenteeltaa seuraava mahdollisimman mahdollisimman nopean toiminnan 
+kannalta.</p>
+
+<div style="background-color:#7070FF">
+Repeat<br/>
+	
+	&nbsp;&nbsp;&nbsp; //Aloitettaan fysiikoiden laskenta<br/>
+	&nbsp;&nbsp;&nbsp;
+	cpUpdate(1.0/60.0)<br><br/>
+
+
+
+	&nbsp;&nbsp;&nbsp;
+
+
+
+	//Piirretään näyttö ja tehdään kaikki tehtävät missä ei jouduta muuttamaan 
+	fysiikoita.<br/>
+	&nbsp;&nbsp;&nbsp; DrawScreen<br/><br/>
+
+
+
+	&nbsp;&nbsp;&nbsp;
+
+
+
+	//Odotettaan fysiikoiden päivittymistä<br/>
+	&nbsp;&nbsp;&nbsp;
+	cpWaitForUpdate()<br/>
+
+
+	&nbsp;&nbsp;&nbsp;
+
+
+	//Haetaan tiedot takaisin Coolbasicin puolelle<br/>
+	&nbsp;&nbsp;&nbsp; cpPullAll()<br><br>&nbsp;&nbsp;&nbsp; //Tähän kaikki 
+	muutokset fysiikkoihin, koska tietojen muuttaminen cpUpdaten ja 
+	cpWaitForUpdaten välissä on kiellettyä.<br/>
+Forever</div>
+<br/>
+<p>Rungot(cpBody) ovat pohjana fysiikka oliolle. Rungoilla on massa, paikka, 
+kulma, momentti sekä nopeus (myös kulmanopeus). Runkoihin voidaan liittää useita 
+törmäysmuotoja(cpShape), jotka antavat rungolle muodon. Mikäli runko luodaan 
+staattiseksi (cpBodyNewStatic), se ei voi liikkua muiden runkojen törmäyksen 
+vaikutuksesta. Silloin sen massa ja kääntymistä vastustava momentti ovat äärettömät.</p>
+<p>Törmäysmuodot luovat rungoille muodon. Ne ovat kiinteästi kiinni rungossa. </p>
+</body>
+
+</html>

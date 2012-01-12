@@ -82,6 +82,8 @@ __declspec( dllexport ) void rotarylimitjointnew( const void * _in, int in_size,
 }
 
 
+
+
 __declspec( dllexport ) void groovejointnew( const void * _in, int in_size, void * _out, int out_sz )
 {
 	Variable *var;
@@ -120,4 +122,40 @@ __declspec( dllexport ) void dampedspringnew( const void * _in, int in_size, voi
 	var = vhAddConstraint(&mVariableHandler,constraint);
 	var->mCBPtr = PEEKINT(INPUT_MEMBLOCK,0);
 	POKEINT(OUTPUT_MEMBLOCK,0,var->mLocalHandle);
+}
+
+__declspec( dllexport ) void setmaxbias( const void * _in, int in_size, void * _out, int out_sz )
+{
+	cpConstraintSetMaxBias((cpConstraint*)vhGetVariable(&mVariableHandler,PEEKINT(INPUT_MEMBLOCK,0))->mPtr,PEEKFLOAT(INPUT_MEMBLOCK,4));
+}
+
+__declspec( dllexport ) void getmaxbias( const void * _in, int in_size, void * _out, int out_sz )
+{
+	POKEFLOAT(OUTPUT_MEMBLOCK,0,cpConstraintGetMaxBias((cpConstraint*)vhGetVariable(&mVariableHandler,PEEKINT(INPUT_MEMBLOCK,0))->mPtr));
+}
+
+__declspec( dllexport ) void seterrorbias( const void * _in, int in_size, void * _out, int out_sz )
+{
+	cpConstraintSetErrorBias((cpConstraint*)vhGetVariable(&mVariableHandler,PEEKINT(INPUT_MEMBLOCK,0))->mPtr,PEEKFLOAT(INPUT_MEMBLOCK,4));
+}
+
+__declspec( dllexport ) void geterrorbias( const void * _in, int in_size, void * _out, int out_sz )
+{
+	POKEFLOAT(OUTPUT_MEMBLOCK,0,cpConstraintGetErrorBias((cpConstraint*)vhGetVariable(&mVariableHandler,PEEKINT(INPUT_MEMBLOCK,0))->mPtr));
+}
+
+__declspec( dllexport ) void setmaxforce( const void * _in, int in_size, void * _out, int out_sz )
+{
+	cpConstraintSetMaxForce((cpConstraint*)vhGetVariable(&mVariableHandler,PEEKINT(INPUT_MEMBLOCK,0))->mPtr,PEEKFLOAT(INPUT_MEMBLOCK,4));
+}
+
+__declspec( dllexport ) void getmaxforce( const void * _in, int in_size, void * _out, int out_sz )
+{
+	POKEFLOAT(OUTPUT_MEMBLOCK,0,cpConstraintGetMaxForce((cpConstraint*)vhGetVariable(&mVariableHandler,PEEKINT(INPUT_MEMBLOCK,0))->mPtr));
+}
+
+
+__declspec( dllexport ) void getimpulse( const void * _in, int in_size, void * _out, int out_sz )
+{
+	POKEFLOAT(OUTPUT_MEMBLOCK,0,cpConstraintGetImpulse((cpConstraint*)vhGetVariable(&mVariableHandler,PEEKINT(INPUT_MEMBLOCK,0))->mPtr));
 }

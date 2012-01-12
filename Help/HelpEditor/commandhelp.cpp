@@ -33,13 +33,36 @@ CommandHelp::CommandHelp(QDataStream &stream, QTreeWidgetItem *item)
 bool CommandHelp::generateFile(QString destination, QString functionBase)
 {
     QString parsedDescription = parseTextEditHtml(mDescription);
-    QString parsedParametres = parseTextEditHtml(mParametres);
+    QString parsedParametres = "<ul>"+parseTextEditHtml(mParametres).replace("</p>","</p></li>").replace("<p ","<li><p ") + "</ul>";
+
+
+
+
     QString parsedExample = parseTextEditHtml(mExamble);
     QFile file(destination+"/"+mName+".html");
-    if (mParent)
+    int stackDepth = 0;
+    QString rootReplaceStr;
+    CommandFolder *cur = this->parent()->parent();
+    while (cur)
+    {
+        rootReplaceStr += "../";
+        stackDepth++;
+        cur = cur->parent();
+    }
+    if (!rootReplaceStr.isEmpty())
+    {
+        rootReplaceStr.remove(rootReplaceStr.length()-1,1);
+    }
+    else
+    {
+        rootReplaceStr = ".";
+    }
+
+    functionBase = functionBase.replace("$$ROOT$$",rootReplaceStr);
+    if (stackDepth > 0)
     {
         functionBase = functionBase.replace("$$FOLDER$$",mParent->name());
-        if (mParent->parent())
+        if (stackDepth > 1)
         {
             functionBase = functionBase.replace("$$PARENTFOLDER$$",mParent->parent()->name());
         }
@@ -77,7 +100,7 @@ void CommandHelp::save(QDataStream &stream)
 QString CommandHelp::parseTextEditHtml(const QString &html)
 {
     QString ret;
-    QStringList parts1 = html.split("<body");
+    QStringList parts1 = html.trimmed().split("<body");
 
     QStringList parts2 = parts1.last().split("</body>");
     ret = "<span"+parts2.first()+"</span>";
