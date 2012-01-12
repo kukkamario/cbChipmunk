@@ -1,0 +1,61 @@
+﻿<html>
+<head>
+<title>Yksiköt cbChipmunkissa</title>
+<style type="text/css">
+body
+{
+	color: #000000;
+	font: 10pt verdana;
+	background: #eeeeee;}
+a
+{
+  	color: #0000ff;
+	text-decoration: none;
+}
+a:hover
+{
+	color: #ffffff;
+	background: #0088ee;
+	text-decoration: none;
+}
+</style>
+</head>
+<body text="#000000" link="blue" alink="red" vlink="blue" bgcolor="#eeeeee">
+<font face="verdana,arial,helvetica,courier" size=2>
+
+<!--{START} -->
+
+<p><font color="#0000ff"><b>Yksiköt</b></font></p>
+
+
+<p>
+Yksinkertaisesti yksiköt voivat olla mitä tahansa. Jos annat sijainnit pikseleissä ja kutsut cpUpdatea sekunteissa olevalla ajalla, 
+kappaleiden nopeus on silloin yksikössä px/s. Kaikki riippuu siis siitä, missä yksikössä annat tiedot.  
+</p>
+<p>
+Yleensä on 
+kätevintä, että pituuden yksikkönä käytettään pikseliä. Joten mikäli halutaan 
+käyttää todellisia arvoja, jotka ovat SI-järjestelmän yksiköissä, ne pitää 
+muuttaa sopivaan yksikköön. Tässä pieni esimerkki muutoksesta:</p>
+<p>
+&nbsp;</p>
+<p>
+MetreToPixel vakioon tallennetaan kerroin jolla kertomalla metreissä oleva luku 
+saadaan muutettua pikseleiksi ja PixelToMetre vakioon edellisen vakion 
+käänteisluku, jolla muunnos tehdään toiseen suuntaan.</p>
+<p>
+Koska Newton vastaa yksikköä Kg*m/s^2, Newtoneissa oleva luku täytyy kertoa 
+MetreToPixel vakiolla, että se saadaan muutettua yksikköön Kg*px/s^2. Massa 
+voidaan pitää kilogrammoina, mutta inertiamomentti pitää kertoa MetreToPixel^2, 
+koska inertiamomentin yksikkö on Kg*m^2, joskin jos käytät inertiamomentin 
+laskentaan cpMomentForGeometryä, ja sille annetut arvot ovat jo munnettu, 
+yksikkö on valmiiksi oikea.</p>
+<p>
+Munnokset takaisin "pikseliyksiköistä" SI:n yksiköiksi onnistuu kertomalla luvut 
+edelliseen tapaan, mutta käyttämällä MetreToPixelin sijaan PixelToMetre vakiota. 
+Esimerkiksi jos haluat tietää nopeuden kilometreinä tunnissa, sinun pitää 
+ensiksi kertoa px/s:ssa oleva nopeus PixelToMetrellä jolloin se muuttuu m/s:ssa. 
+Sen jälkeen kerrot luvun 3.6 jolloin m/s muuttuvat km/h:ksi.</p>
+</body>
+
+</html>
