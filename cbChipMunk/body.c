@@ -46,6 +46,38 @@ __declspec( dllexport ) void bodynewstatic( const void * _in, int in_size, void 
 	cpSpaceAddBody(&mSpace,body);
 }
 
+static double gravitationPower = 2.0;
+static double gravitationForce = 1.0;
+static cpBody *gravitationTarget = 0;
+
+void applyGravitationToBody(cpBody *b, void *d) {
+	if (b != gravitationTarget && !cpBodyIsStatic(b)) {
+		double force;
+		if (gravitationPower == 2.0) {
+			force = gravitationForce * b->m / cpvdistsq(b->p, gravitationTarget->p);
+		} else {
+			force = gravitationForce * b->m / pow(cpvdist(b->p, gravitationTarget->p), gravitationPower);
+		}
+		cpBodyApplyForce(b, cpvmult(cpvnormalize(cpvsub(gravitationTarget->p, b->p)), force), cpvzero);
+	}
+}
+
+__declspec ( dllexport ) void applygravitation( const void * _in, int in_size, void * _out, int out_sz ) {
+	Variable *var;
+	var = vhGetVariable(&mVariableHandler, PEEKINT(INPUT_MEMBLOCK, 0));
+	gravitationPower = PEEKFLOAT(INPUT_MEMBLOCK, 8);
+	gravitationForce = PEEKFLOAT(INPUT_MEMBLOCK, 4);
+	if (var->mType != VarTypeBody) 
+	{
+		MessageBoxA(NULL,"The first parameter of cpApplyGravitation must be cpBody","Chipmunk error",MB_OK);
+		return;
+	}
+	gravitationTarget = (cpBody*)var->mPtr;
+
+	cpSpaceEachBody(&mSpace, &applyGravitationToBody, 0);
+
+}
+
 
 __declspec( dllexport ) void isbodysleeping( const void * _in, int in_size, void * _out, int out_sz )
 {
@@ -53,7 +85,7 @@ __declspec( dllexport ) void isbodysleeping( const void * _in, int in_size, void
 	var = vhGetVariable(&mVariableHandler,PEEKINT(INPUT_MEMBLOCK,0));
 	if (var->mType != VarTypeBody)
 	{
-		MessageBoxA(NULL,"isBodySleeping's parametre must be cpBody","Chipmunk error",MB_OK);
+		MessageBoxA(NULL,"cpIsBodySleeping's parameter must be cpBody","Chipmunk error",MB_OK);
 		POKEINT(OUTPUT_MEMBLOCK,0,0);
 		return;
 	}

@@ -368,7 +368,7 @@ EndFunction
 
 Function cpShapeNewStatic(geometry,layer = -1,group = 0,offsetVecX# = 0,offsetVecY# = 0,friction# = 0.7,restitution# = 0.3)
     If Not offsetVec Then offsetVec = cpVecNew(0,0)
-    shape = MakeMEMBlock(41)
+    shape = MakeMEMBlock(45)
     PokeInt CP_OUT_MEMBLOCK,0,shape
     PokeFloat CP_OUT_MEMBLOCK,4,offsetVecX#
     PokeFloat CP_OUT_MEMBLOCK,8,offsetVecY#
@@ -1204,5 +1204,12 @@ Function cpConstraintSetErrorBias(constraint,bias#)
     PokeInt CP_OUT_MEMBLOCK,0,PeekInt(constraint,CP_INDEX_CONSTRAINT_DLL_INDEX)
     PokeFloat CP_OUT_MEMBLOCK,4,bias#
     CallDLL CP_DLL_PATH,"seterrorbias",CP_OUT_MEMBLOCK
+EndFunction
+
+Function cpApplyGravitation(body, force#, power# = 2.0)
+	PokeInt CP_OUT_MEMBLOCK, 0, PeekInt(body, CP_INDEX_BODY_DLL_INDEX)
+	PokeFloat CP_OUT_MEMBLOCK, 4, force#
+	PokeFloat CP_OUT_MEMBLOCK, 8, power#
+	CallDLL CP_DLL_PATH, "applygravitation", CP_OUT_MEMBLOCK
 EndFunction
 

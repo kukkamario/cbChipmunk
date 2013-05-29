@@ -1,0 +1,114 @@
+
+Const CP_DLL_PATH = "../cbChipmunk.dll"
+Include "../cbChipmunk.cb"
+
+FrameLimit 40
+
+Const particleMass = 0.3
+Const PARTICLE_HALF_SIZE = 1
+Const PARTICLE_FULL_SIZE = 2
+
+Type particles
+    Field body
+    Field shape
+    Field r
+    Field g
+    Field b
+EndType
+
+Global PCR As Float,PCG As Float,PCB As Float,particleGeometry,particleCount
+PCR = Rand(100,255)
+PCG = Rand(100,255)
+PCB = Rand(100,255)
+
+cpUseSpatialHash(PARTICLE_FULL_SIZE,30000)//Käytetään spatialhashiä,
+//joka toimii paljon nopeammin kuin puu, kun kyse on suuresta määrästä samanlaisia muotoja.
+
+
+particleGeometry = cpCircleGeometryNew(PARTICLE_HALF_SIZE,0)
+Const SCREEN_W = 400
+Const SCREEN_W_H = 200
+Const SCREEN_H = 300
+Const SCREEN_H_H = 150
+SCREEN SCREEN_W,SCREEN_H
+cpSetIterations(20)
+
+//cpSetGravity(0,-300)
+borderGeometry = cpBoxGeometryNew(SCREEN_W,SCREEN_H)
+cpBorderNew(borderGeometry,10)
+
+center = cpBodyNewStatic(0, 0)
+centerGeometry = cpCircleGeometryNew(50)
+centerShape = cpShapeNewStatic(centerGeometry)
+
+
+DrawToWorld ON
+lastUpdate = Timer()
+Repeat
+    Color cbWhite
+    updateTime# = cpWaitForUpdate()//Odotetaan fysiikan päivittymistä...
+    cpPullAll()
+    If MouseDown(1) Then
+        //Print "AddP"
+        AddParticle(MouseWX(),MouseWY())
+    ElseIf MouseDown(2)
+        RemoveParticlesInRadius(MouseWX(),MouseWY(),10)
+    ElseIf MouseHit(3)
+        cpExplosion(MouseWX(),MouseWY(),200)
+    EndIf
+    RemoveMissingParticles()
+	cpApplyGravitation(center, 10000, 1.1)
+    cpUpdate(1.0/40.0) //Aloitetaan fysiikan päivitys.
+    //Tämän jälkeen ei muokkauksia fysiikkaan¨
+
+    Text 10,0,"Particles:"+particlecount
+    Text 10,10,"FPS:"+FPS()
+    Text 10,30,"Updating physics took "+updateTime#+"ms"
+    
+    For particle.particles = Each particles
+        Color particle\r,particle\g,particle\b
+        Dot PeekFloat(particle\body,CP_INDEX_BODY_POS_X)-PARTICLE_HALF_SIZE,PeekFloat(particle\body,CP_INDEX_BODY_POS_Y)-PARTICLE_HALF_SIZE
+    Next particle
+    
+    DrawScreen
+Forever
+
+Function AddParticle(x,y)
+    For i = 1 To 10
+        particle.particles = New(particles)
+        particle\body = cpBodyNew(particleMass,0.0001,x+Rand(-2,2),y+Rand(-2,2))
+        particle\shape = cpShapeNew(particle\body,particleGeometry,-1,0,0,0,0.0000001,0.3)
+        particle\r = PCR
+        particle\g = PCG
+        particle\b = PCB
+        PCR + 0.09
+        PCG + 0.06
+        PCB + 0.03
+        If PCR > 255 Then PCR = 100
+        If PCG > 255 Then PCG = 100
+        If PCB > 255 Then PCB = 100
+        particleCount + 1
+    Next i
+EndFunction
+
+Function RemoveMissingParticles()
+    For particle.particles = Each particles
+        py# = PeekFloat(particle\body,CP_INDEX_BODY_POS_Y)
+        If py < -SCREEN_H_H-100 Then
+            cpDelete(particle\body)
+            Delete particle
+            particleCount - 1
+        EndIf
+    Next particle
+EndFunction
+
+Function RemoveParticlesInRadius(x,y,r#)
+    For particle.particles = Each particles
+        If Distance(PeekFloat(particle\body,CP_INDEX_BODY_POS_X),PeekFloat(particle\body,CP_INDEX_BODY_POS_Y),x,y) < r# Then
+            cpDelete(particle\body)
+            Delete particle
+            particleCount - 1
+        EndIf
+    Next particle
+EndFunction
+
