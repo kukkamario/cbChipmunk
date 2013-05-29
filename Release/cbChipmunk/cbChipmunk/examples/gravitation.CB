@@ -57,7 +57,9 @@ Repeat
         cpExplosion(MouseWX(),MouseWY(),200)
     EndIf
     RemoveMissingParticles()
+
 	cpApplyGravitation(center, 10000, 1.1)
+	
     cpUpdate(1.0/40.0) //Aloitetaan fysiikan päivitys.
     //Tämän jälkeen ei muokkauksia fysiikkaan¨
 
